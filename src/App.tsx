@@ -25,12 +25,12 @@ import { OrderTrackingPage } from './pages/OrderTrackingPage';
 
 export const AppContent: React.FC = () => {
   const [products, setProducts] = useState<Product[]>(() => {
-    const saved = localStorage.getItem('lovina_products_catalog');
+    const saved = localStorage.getItem('lovina_products_v4');
     return saved ? JSON.parse(saved) : INITIAL_PRODUCTS;
   });
 
   useEffect(() => {
-    localStorage.setItem('lovina_products_catalog', JSON.stringify(products));
+    localStorage.setItem('lovina_products_v4', JSON.stringify(products));
   }, [products]);
 
   const [currentPage, setCurrentPage] = useState<'home' | 'shop' | 'product-detail' | 'checkout' | 'account' | 'admin' | 'tracking'>('home');
