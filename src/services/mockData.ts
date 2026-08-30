@@ -1,6 +1,148 @@
 import { Product, Order } from '../types';
 
 export const INITIAL_PRODUCTS: Product[] = [
+  {
+    id: 'lov-new-101',
+    name: 'Royal Sapphire Solitaire Halo Necklace',
+    slug: 'royal-sapphire-solitaire-halo-necklace',
+    sku: 'LOV-NCK-101',
+    category: 'necklaces',
+    categoryName: 'Necklaces',
+    priceLKR: 18900,
+    discountPriceLKR: 16500,
+    rating: 5.0,
+    reviewCount: 42,
+    description: 'A breathtaking deep sapphire blue cubic zirconia pendant enveloped by a brilliant halo of micro pave crystal accents on an 18K gold chain.',
+    details: ['Center Stone: 12x10mm Royal Sapphire CZ', 'Finish: 18K Micro Gold Vacuum Plating', 'Anti-Tarnish Guarantee Included'],
+    attributes: { material: '18K Gold Plated', gemstone: 'Cubic Zirconia', plating: '18K Micro Gold Vacuum Plating', warranty: '1 Year Anti-Tarnish Warranty' },
+    images: ['/assets/necklace2.jpg', '/assets/necklace.jpg'],
+    isFeatured: true,
+    isNewArrival: true,
+    isBestSeller: true,
+    variants: [
+      { id: 'v-101-gold', color: '18K Yellow Gold', colorHex: '#D4AF37', size: '18 inch', priceLKR: 16500, stock: 12, inStock: true },
+      { id: 'v-101-silver', color: '925 Silver Finish', colorHex: '#C0C0C0', size: '18 inch', priceLKR: 16500, stock: 8, inStock: true }
+    ],
+    stockQuantity: 20
+  },
+  {
+    id: 'lov-new-102',
+    name: 'Princess Cushion Cut Solitaire Ring',
+    slug: 'princess-cushion-cut-solitaire-ring',
+    sku: 'LOV-RNG-102',
+    category: 'rings',
+    categoryName: 'Rings',
+    priceLKR: 13500,
+    discountPriceLKR: 11900,
+    rating: 4.9,
+    reviewCount: 29,
+    description: 'An elegant 3-carat cushion-cut solitaire zirconia ring crafted in 925 sterling silver with a tapered baguette band.',
+    details: ['925 Sterling Silver Stamped', 'Stone: 3.0ct Cushion Cut CZ', 'Includes Velvet Ring Presentation Box'],
+    attributes: { material: '925 Sterling Silver', gemstone: 'Cubic Zirconia', plating: 'Rhodium Mirror Finish', warranty: '1 Year Anti-Tarnish Warranty' },
+    images: ['/assets/ring.jpg', '/assets/ring2.jpg'],
+    isFeatured: true,
+    isNewArrival: true,
+    isBestSeller: false,
+    variants: [
+      { id: 'v-102-us6', color: '925 Silver', colorHex: '#C0C0C0', size: 'US 6', priceLKR: 11900, stock: 10, inStock: true },
+      { id: 'v-102-us7', color: '925 Silver', colorHex: '#C0C0C0', size: 'US 7', priceLKR: 11900, stock: 15, inStock: true }
+    ],
+    stockQuantity: 25
+  },
+  {
+    id: 'lov-new-103',
+    name: 'Cascade Austrian Crystal Drop Earrings',
+    slug: 'cascade-austrian-crystal-drop-earrings',
+    sku: 'LOV-ERG-103',
+    category: 'earrings',
+    categoryName: 'Earrings',
+    priceLKR: 15900,
+    discountPriceLKR: 13800,
+    rating: 4.8,
+    reviewCount: 35,
+    description: 'Opulent cascading tear-drop earrings studded with multi-faceted Austrian crystals designed for gala evenings.',
+    details: ['18K Gold Plated Brass', 'Hypoallergenic Titanium Posts', 'Length: 2.2 inches'],
+    attributes: { material: '18K Gold Plated', gemstone: 'Austrian Crystal', plating: '18K Gold Plating', warranty: '1 Year Warranty' },
+    images: ['/assets/earring.jpg', '/assets/earring2.jpg'],
+    isFeatured: true,
+    isNewArrival: true,
+    isBestSeller: true,
+    variants: [
+      { id: 'v-103-gold', color: '18K Yellow Gold', colorHex: '#D4AF37', size: 'Standard', priceLKR: 13800, stock: 18, inStock: true }
+    ],
+    stockQuantity: 18
+  },
+  {
+    id: 'lov-new-104',
+    name: 'Imperial Triple Pave Tennis Bracelet',
+    slug: 'imperial-triple-pave-tennis-bracelet',
+    sku: 'LOV-BRC-104',
+    category: 'bracelets',
+    categoryName: 'Bracelets',
+    priceLKR: 17200,
+    discountPriceLKR: 14900,
+    rating: 4.9,
+    reviewCount: 51,
+    description: 'A classic luxury tennis bracelet featuring three continuous rows of hand-set AAA cubic zirconia stones.',
+    details: ['Dual Safety Latch Clasp', '18K Gold Vacuum Plating', 'Length: 7 inches'],
+    attributes: { material: '18K Gold Plated', gemstone: 'Cubic Zirconia', plating: '18K Micro Gold', warranty: '1 Year Warranty' },
+    images: ['/assets/bracelet.jpg', '/assets/bracelet2.jpg'],
+    isFeatured: true,
+    isNewArrival: false,
+    isBestSeller: true,
+    variants: [
+      { id: 'v-104-gold', color: '18K Yellow Gold', colorHex: '#D4AF37', size: '7 inch', priceLKR: 14900, stock: 14, inStock: true },
+      { id: 'v-104-rose', color: 'Rose Gold', colorHex: '#E5C1CD', size: '7 inch', priceLKR: 14900, stock: 7, inStock: true }
+    ],
+    stockQuantity: 21
+  },
+  {
+    id: 'lov-new-105',
+    name: 'Monarch Black Onyx Cushion Signet Ring',
+    slug: 'monarch-black-onyx-cushion-signet-ring',
+    sku: 'LOV-MEN-105',
+    category: 'mens-accessories',
+    categoryName: "Men's Accessories",
+    priceLKR: 14800,
+    discountPriceLKR: 12900,
+    rating: 5.0,
+    reviewCount: 22,
+    description: 'A masculine heavy-gauge signet ring featuring a polished natural black onyx stone inlay flanked by brushed gold shoulders.',
+    details: ['316L Surgical Grade Stainless Steel', 'Natural Black Onyx Gemstone', 'Scratch Resistant Finish'],
+    attributes: { material: 'Stainless Steel', gemstone: 'Opal', plating: '18K Gold Plating', warranty: 'Lifetime Color Guarantee' },
+    images: ['/assets/mens.jpg', '/assets/mens2.jpg'],
+    isFeatured: true,
+    isNewArrival: true,
+    isBestSeller: true,
+    variants: [
+      { id: 'v-105-us9', color: 'Gold & Onyx', colorHex: '#121212', size: 'US 9', priceLKR: 12900, stock: 10, inStock: true },
+      { id: 'v-105-us10', color: 'Gold & Onyx', colorHex: '#121212', size: 'US 10', priceLKR: 12900, stock: 12, inStock: true }
+    ],
+    stockQuantity: 22
+  },
+  {
+    id: 'lov-new-106',
+    name: 'Celeste Freshwater Pearl & Crystal Choker',
+    slug: 'celeste-freshwater-pearl-and-crystal-choker',
+    sku: 'LOV-NCK-106',
+    category: 'necklaces',
+    categoryName: 'Necklaces',
+    priceLKR: 21000,
+    discountPriceLKR: 18500,
+    rating: 4.9,
+    reviewCount: 16,
+    description: 'An ethereal choker necklace featuring hand-picked baroque freshwater pearls alternated with sparkling crystal rondelles.',
+    details: ['Genuine Baroque Freshwater Pearls', '18K Rose Gold Plated Clasp', 'Hand-strung Silk Thread'],
+    attributes: { material: 'Rose Gold Plated', gemstone: 'Freshwater Pearl', plating: '18K Rose Gold', warranty: '1 Year Guarantee' },
+    images: ['/assets/necklace.jpg', '/assets/necklace2.jpg'],
+    isFeatured: true,
+    isNewArrival: true,
+    isBestSeller: false,
+    variants: [
+      { id: 'v-106-rose', color: 'Rose Gold & Pearl', colorHex: '#E5C1CD', size: '16 inch', priceLKR: 18500, stock: 9, inStock: true }
+    ],
+    stockQuantity: 9
+  },
   // ==========================================
   // 1. NECKLACES (10 Realistic Luxury Items)
   // ==========================================
