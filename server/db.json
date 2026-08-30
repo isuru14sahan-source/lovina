@@ -1,0 +1,60 @@
+{
+  "orders": [
+    {
+      "id": "ord-101",
+      "orderNumber": "LV-90821",
+      "date": "2026-07-25",
+      "items": [
+        {
+          "productId": "lov-nck-01",
+          "productName": "Aurelia 18K Gold Plated Pendant Necklace",
+          "variantColor": "18K Yellow Gold",
+          "variantSize": "18 inch",
+          "unitPrice": 12800,
+          "quantity": 1,
+          "image": "/assets/necklace.jpg"
+        }
+      ],
+      "shippingAddress": {
+        "fullName": "Kasun Perera",
+        "phone": "+94 77 123 4567",
+        "street": "45/2 Cinnamon Gardens",
+        "city": "Colombo 07",
+        "postalCode": "00700",
+        "country": "Sri Lanka"
+      },
+      "paymentMethod": "card",
+      "totalAmountLKR": 13300,
+      "status": "Processing",
+      "trackingNumber": "TRK-SL-892100"
+    },
+    {
+      "id": "ord-102",
+      "orderNumber": "LV-90822",
+      "date": "2026-07-26",
+      "items": [
+        {
+          "productId": "lov-brc-01",
+          "productName": "Royal Heritage Tennis Bracelet",
+          "variantColor": "18K Gold",
+          "variantSize": "7 inch",
+          "unitPrice": 16500,
+          "quantity": 1,
+          "image": "/assets/bracelet.jpg"
+        }
+      ],
+      "shippingAddress": {
+        "fullName": "Nimali Fernando",
+        "phone": "+94 71 987 6543",
+        "street": "12 Temple Road",
+        "city": "Kandy",
+        "postalCode": "20000",
+        "country": "Sri Lanka"
+      },
+      "paymentMethod": "cod",
+      "totalAmountLKR": 17000,
+      "status": "Pending"
+    }
+  ],
+  "reviews": []
+}

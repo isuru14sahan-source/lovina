@@ -1,0 +1,14 @@
+{
+  "name": "lovina-backend-api",
+  "version": "1.0.0",
+  "description": "Lovina Luxury Jewelry E-Commerce Live REST API Server",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}

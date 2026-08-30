@@ -1,0 +1,239 @@
+import React, { useState, useEffect } from 'react';
+import { CategorySlug, Product } from './types';
+import { INITIAL_PRODUCTS } from './services/mockData';
+
+import { ToastProvider } from './context/ToastContext';
+import { AuthProvider } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
+import { WishlistProvider } from './context/WishlistContext';
+
+import { Header } from './components/common/Header';
+import { Footer } from './components/common/Footer';
+import { ToastContainer } from './components/common/Toast';
+import { CartDrawer } from './components/cart/CartDrawer';
+import { WishlistDrawer } from './components/wishlist/WishlistDrawer';
+import { QuickViewModal } from './components/product/QuickViewModal';
+import { LiveSearchModal } from './components/common/LiveSearchModal';
+
+import { HomePage } from './pages/HomePage';
+import { ShopPage } from './pages/ShopPage';
+import { ProductDetailPage } from './pages/ProductDetailPage';
+import { CheckoutPage } from './pages/CheckoutPage';
+import { AccountPage } from './pages/AccountPage';
+import { AdminDashboard } from './pages/AdminDashboard';
+import { OrderTrackingPage } from './pages/OrderTrackingPage';
+
+export const AppContent: React.FC = () => {
+  const [products, setProducts] = useState<Product[]>(() => {
+    const saved = localStorage.getItem('lovina_products_catalog');
+    return saved ? JSON.parse(saved) : INITIAL_PRODUCTS;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('lovina_products_catalog', JSON.stringify(products));
+  }, [products]);
+
+  const [currentPage, setCurrentPage] = useState<'home' | 'shop' | 'product-detail' | 'checkout' | 'account' | 'admin' | 'tracking'>('home');
+  const [activeCategory, setActiveCategory] = useState<CategorySlug>('all');
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
+
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
+
+  const handleSelectCategory = (category: CategorySlug) => {
+    setActiveCategory(category);
+  };
+
+  const handleSelectProduct = (product: Product) => {
+    setSelectedProduct(product);
+    setCurrentPage('product-detail');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleAddProduct = (newProd: Product) => {
+    setProducts((prev) => [newProd, ...prev]);
+  };
+
+  const handleEditProduct = (updated: Product) => {
+    setProducts((prev) =>
+      prev.map((p) => (p.id === updated.id ? updated : p))
+    );
+  };
+
+  const handleSoftDeleteProduct = (id: string) => {
+    setProducts((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, isDeleted: true } : p))
+    );
+  };
+
+  const handleRestoreProduct = (id: string) => {
+    setProducts((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, isDeleted: false } : p))
+    );
+  };
+
+  const handleAddReview = (productId: string, newReview: { name: string; rating: number; comment: string; date: string }) => {
+    setProducts((prev) =>
+      prev.map((p) => {
+        if (p.id === productId) {
+          const updatedCount = p.reviewCount + 1;
+          const updatedRating = Number(((p.rating * p.reviewCount + newReview.rating) / updatedCount).toFixed(1));
+          return { ...p, reviewCount: updatedCount, rating: updatedRating };
+        }
+        return p;
+      })
+    );
+  };
+
+  const activeProducts = products.filter((p) => !p.isDeleted);
+
+  return (
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      {/* Customer-Facing Boutique Header (Hidden on Admin Portal) */}
+      {currentPage !== 'admin' && (
+        <Header
+          activeCategory={activeCategory}
+          onSelectCategory={handleSelectCategory}
+          onNavigate={(page) => {
+            setCurrentPage(page);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          currentPage={currentPage}
+          onOpenSearch={() => setIsSearchOpen(true)}
+          onOpenWishlist={() => setIsWishlistOpen(true)}
+        />
+      )}
+
+      <div style={{ flex: 1 }}>
+        {currentPage === 'home' && (
+          <HomePage
+            products={activeProducts}
+            onSelectCategory={(cat) => {
+              handleSelectCategory(cat);
+              setCurrentPage('shop');
+            }}
+            onNavigate={(page) => {
+              setCurrentPage(page);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onQuickView={(p) => setQuickViewProduct(p)}
+            onSelectProduct={handleSelectProduct}
+          />
+        )}
+
+        {currentPage === 'shop' && (
+          <ShopPage
+            products={activeProducts}
+            activeCategory={activeCategory}
+            onSelectCategory={handleSelectCategory}
+            onQuickView={(p) => setQuickViewProduct(p)}
+            onSelectProduct={handleSelectProduct}
+          />
+        )}
+
+        {currentPage === 'product-detail' && selectedProduct && (
+          <ProductDetailPage
+            product={selectedProduct}
+            allProducts={activeProducts}
+            onBack={() => setCurrentPage('shop')}
+            onQuickView={(p) => setQuickViewProduct(p)}
+            onSelectProduct={handleSelectProduct}
+            onAddReview={handleAddReview}
+          />
+        )}
+
+        {currentPage === 'checkout' && (
+          <CheckoutPage
+            onBackToShop={() => setCurrentPage('shop')}
+            onOrderComplete={() => {
+              setCurrentPage('account');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        )}
+
+        {currentPage === 'account' && (
+          <AccountPage onNavigateShop={() => setCurrentPage('shop')} />
+        )}
+
+        {currentPage === 'tracking' && (
+          <OrderTrackingPage onBackToShop={() => setCurrentPage('shop')} />
+        )}
+
+        {currentPage === 'admin' && (
+          <AdminDashboard
+            products={products}
+            onAddProduct={handleAddProduct}
+            onUpdateProductStock={(id, stock) => {
+              setProducts((prev) => prev.map((p) => p.id === id ? { ...p, stockQuantity: stock } : p));
+            }}
+            onEditProduct={handleEditProduct}
+            onSoftDeleteProduct={handleSoftDeleteProduct}
+            onRestoreProduct={handleRestoreProduct}
+            onNavigateShop={() => {
+              setCurrentPage('home');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        )}
+      </div>
+
+      {/* Customer-Facing Boutique Footer (Hidden on Admin Portal) */}
+      {currentPage !== 'admin' && (
+        <Footer
+          onSelectCategory={(cat) => {
+            handleSelectCategory(cat);
+            setCurrentPage('shop');
+          }}
+          onNavigate={(page) => {
+            setCurrentPage(page);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+        />
+      )}
+
+      {/* Cart Drawer Overlay */}
+      <CartDrawer onCheckout={() => setCurrentPage('checkout')} />
+
+      {/* Wishlist Drawer Overlay */}
+      <WishlistDrawer
+        isOpen={isWishlistOpen}
+        onClose={() => setIsWishlistOpen(false)}
+        onSelectProduct={handleSelectProduct}
+      />
+
+      {/* Live Search Modal Overlay */}
+      <LiveSearchModal
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        products={activeProducts}
+        onSelectProduct={handleSelectProduct}
+      />
+
+      {/* Quick View Modal Overlay */}
+      <QuickViewModal
+        product={quickViewProduct}
+        onClose={() => setQuickViewProduct(null)}
+        onSelectProduct={handleSelectProduct}
+      />
+
+      {/* Toast Notification Layer */}
+      <ToastContainer />
+    </div>
+  );
+};
+
+export const App: React.FC = () => {
+  return (
+    <ToastProvider>
+      <AuthProvider>
+        <CartProvider>
+          <WishlistProvider>
+            <AppContent />
+          </WishlistProvider>
+        </CartProvider>
+      </AuthProvider>
+    </ToastProvider>
+  );
+};
