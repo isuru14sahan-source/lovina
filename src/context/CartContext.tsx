@@ -110,7 +110,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const subtotalLKR = cart.reduce((sum, item) => {
-    const price = item.product.discountPriceLKR || item.product.priceLKR;
+    const price = item.selectedVariant?.priceLKR || item.product.discountPriceLKR || item.product.priceLKR;
     return sum + price * item.quantity;
   }, 0);
 

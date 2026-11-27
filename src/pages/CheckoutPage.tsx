@@ -56,7 +56,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onBackToShop, onOrde
         productName: i.product.name,
         variantColor: i.selectedVariant.color,
         variantSize: i.selectedVariant.size || '',
-        unitPrice: i.product.discountPriceLKR || i.product.priceLKR,
+        unitPrice: i.selectedVariant?.priceLKR || i.product.discountPriceLKR || i.product.priceLKR,
         quantity: i.quantity,
         image: i.product.images[0] || '/assets/necklace.jpg'
       })),
@@ -364,7 +364,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onBackToShop, onOrde
                     <span style={{ fontSize: '0.75rem', color: '#888' }}>Qty: {item.quantity} • {item.selectedVariant.color}</span>
                   </div>
                   <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#AA820A' }}>
-                    LKR {((item.product.discountPriceLKR || item.product.priceLKR) * item.quantity).toLocaleString()}
+                    LKR {((item.selectedVariant?.priceLKR || item.product.discountPriceLKR || item.product.priceLKR) * item.quantity).toLocaleString()}
                   </span>
                 </div>
               ))}

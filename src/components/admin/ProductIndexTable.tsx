@@ -209,11 +209,11 @@ export const ProductIndexTable: React.FC<ProductIndexTableProps> = ({
                     {/* Price LKR */}
                     <td style={{ padding: '1rem 1rem' }}>
                       <span style={{ fontWeight: 700, color: '#121212', fontSize: '0.9rem' }}>
-                        LKR {(p.discountPriceLKR || p.priceLKR).toLocaleString()}
+                        LKR {(p.discountPriceLKR || (p.variants?.[0]?.priceLKR) || p.priceLKR).toLocaleString()}
                       </span>
                       {p.discountPriceLKR && (
                         <span style={{ display: 'block', fontSize: '0.72rem', textDecoration: 'line-through', color: '#999999' }}>
-                          LKR {p.priceLKR.toLocaleString()}
+                          LKR {((p.variants?.[0]?.priceLKR) || p.priceLKR).toLocaleString()}
                         </span>
                       )}
                     </td>

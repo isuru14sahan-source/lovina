@@ -98,7 +98,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onCheckout }) => {
             </div>
           ) : (
             cart.map((item) => {
-              const unitPrice = item.product.discountPriceLKR || item.product.priceLKR;
+              const unitPrice = item.selectedVariant?.priceLKR || item.product.discountPriceLKR || item.product.priceLKR;
               return (
                 <div
                   key={`${item.product.id}-${item.selectedVariant.id}`}

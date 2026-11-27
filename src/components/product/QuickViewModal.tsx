@@ -21,7 +21,8 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
   const [quantity, setQuantity] = useState<number>(1);
 
   const isLiked = isInWishlist(product.id);
-  const currentPrice = product.discountPriceLKR || product.priceLKR;
+  const basePrice = selectedVariant?.priceLKR || (product.variants?.[0]?.priceLKR) || product.priceLKR;
+  const currentPrice = product.discountPriceLKR || basePrice;
 
   return (
     <div
@@ -120,7 +121,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
               </span>
               {product.discountPriceLKR && (
                 <span style={{ fontSize: '1rem', color: '#888', textDecoration: 'line-through' }}>
-                  LKR {product.priceLKR.toLocaleString()}
+                  LKR {basePrice.toLocaleString()}
                 </span>
               )}
             </div>

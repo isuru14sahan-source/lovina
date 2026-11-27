@@ -70,7 +70,7 @@ export const WishlistDrawer: React.FC<WishlistDrawerProps> = ({
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               {wishlist.map(({ product }) => {
-                const price = product.discountPriceLKR || product.priceLKR;
+                const price = product.discountPriceLKR || (product.variants?.[0]?.priceLKR) || product.priceLKR;
                 return (
                   <div
                     key={product.id}

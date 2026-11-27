@@ -162,7 +162,7 @@ export const LiveSearchModal: React.FC<LiveSearchModalProps> = ({
                       {product.name}
                     </h4>
                     <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#121212' }}>
-                      LKR {(product.discountPriceLKR || product.priceLKR).toLocaleString()}
+                      LKR {(product.discountPriceLKR || (product.variants?.[0]?.priceLKR) || product.priceLKR).toLocaleString()}
                     </span>
                   </div>
                   <ArrowRight size={18} color="#D4AF37" />

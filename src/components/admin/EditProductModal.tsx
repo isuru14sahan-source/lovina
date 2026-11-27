@@ -126,6 +126,16 @@ export const EditProductModal: React.FC<EditProductModalProps> = ({
     setVariants((prev) => prev.filter((v) => v.id !== id));
   };
 
+  const handlePriceChange = (val: string) => {
+    setPriceLKR(val);
+    const num = Number(val);
+    if (!isNaN(num) && num > 0) {
+      setVariants((prev) =>
+        prev.map((v) => ({ ...v, priceLKR: num }))
+      );
+    }
+  };
+
   const handleVariantChange = (id: string, field: keyof ProductVariant, value: any) => {
     setVariants((prev) =>
       prev.map((v) => {
@@ -133,6 +143,9 @@ export const EditProductModal: React.FC<EditProductModalProps> = ({
           const updated = { ...v, [field]: value };
           if (field === 'stock') {
             updated.inStock = Number(value) > 0;
+          }
+          if (field === 'priceLKR' && Number(value) > 0) {
+            setPriceLKR(String(value));
           }
           return updated;
         }
@@ -147,6 +160,8 @@ export const EditProductModal: React.FC<EditProductModalProps> = ({
       showToast('Product title is required', 'error');
       return;
     }
+
+    const parsedPrice = Number(priceLKR) || (variants[0]?.priceLKR ? Number(variants[0].priceLKR) : product.priceLKR);
 
     const cleanMain = googleDriveService.formatDriveUrl(mainHeroImage.trim());
     const cleanG1 = googleDriveService.formatDriveUrl(galleryImage1.trim());
@@ -169,7 +184,7 @@ export const EditProductModal: React.FC<EditProductModalProps> = ({
       sku: sku.trim(),
       category,
       categoryName: category.charAt(0).toUpperCase() + category.slice(1).replace('-', ' '),
-      priceLKR: Number(priceLKR),
+      priceLKR: parsedPrice,
       discountPriceLKR: discountPriceLKR ? Number(discountPriceLKR) : undefined,
       stockQuantity: Number(stockQuantity),
       description,
@@ -264,7 +279,7 @@ export const EditProductModal: React.FC<EditProductModalProps> = ({
               </div>
               <div>
                 <label style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.3rem' }}>Standard Price (LKR) *</label>
-                <input type="number" required value={priceLKR} onChange={(e) => setPriceLKR(e.target.value)} style={{ width: '100%', padding: '0.65rem', borderRadius: '6px', border: '1px solid #D5CEC2' }} />
+                <input type="number" required value={priceLKR} onChange={(e) => handlePriceChange(e.target.value)} style={{ width: '100%', padding: '0.65rem', borderRadius: '6px', border: '1px solid #D5CEC2' }} />
               </div>
               <div>
                 <label style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.3rem' }}>Discount Price (LKR)</label>

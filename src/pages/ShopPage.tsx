@@ -64,7 +64,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({
         }
 
         // Price
-        const price = product.discountPriceLKR || product.priceLKR;
+        const price = product.discountPriceLKR || (product.variants?.[0]?.priceLKR) || product.priceLKR;
         if (price > filterState.maxPrice) return false;
 
         // Metals
@@ -99,8 +99,8 @@ export const ShopPage: React.FC<ShopPageProps> = ({
         return true;
       })
       .sort((a, b) => {
-        const priceA = a.discountPriceLKR || a.priceLKR;
-        const priceB = b.discountPriceLKR || b.priceLKR;
+        const priceA = a.discountPriceLKR || (a.variants?.[0]?.priceLKR) || a.priceLKR;
+        const priceB = b.discountPriceLKR || (b.variants?.[0]?.priceLKR) || b.priceLKR;
 
         if (filterState.sortBy === 'price-low') return priceA - priceB;
         if (filterState.sortBy === 'price-high') return priceB - priceA;

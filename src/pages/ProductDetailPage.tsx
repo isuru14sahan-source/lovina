@@ -44,7 +44,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
   };
 
   const isLiked = isInWishlist(product.id);
-  const currentPrice = product.discountPriceLKR || product.priceLKR;
+  const basePrice = selectedVariant?.priceLKR || (product.variants?.[0]?.priceLKR) || product.priceLKR;
+  const currentPrice = product.discountPriceLKR || basePrice;
   const relatedProducts = allProducts.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
 
   return (
@@ -119,7 +120,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
               </span>
               {product.discountPriceLKR && (
                 <span style={{ fontSize: '1.1rem', color: '#888', textDecoration: 'line-through' }}>
-                  LKR {product.priceLKR.toLocaleString()}
+                  LKR {basePrice.toLocaleString()}
                 </span>
               )}
             </div>

@@ -15,8 +15,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
   const { toggleWishlist, isInWishlist } = useWishlist();
 
   const isLiked = isInWishlist(product.id);
-  const currentPrice = product.discountPriceLKR || product.priceLKR;
-  const hasDiscount = product.discountPriceLKR && product.discountPriceLKR < product.priceLKR;
+  const variantPrice = product.variants && product.variants.length > 0 && product.variants[0].priceLKR
+    ? product.variants[0].priceLKR
+    : undefined;
+  const basePrice = variantPrice || product.priceLKR;
+  const currentPrice = product.discountPriceLKR || basePrice;
+  const hasDiscount = product.discountPriceLKR && product.discountPriceLKR < basePrice;
 
   return (
     <div
@@ -158,7 +162,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
             </span>
             {hasDiscount && (
               <span style={{ fontSize: '0.85rem', color: '#999', textDecoration: 'line-through' }}>
-                LKR {product.priceLKR.toLocaleString()}
+                LKR {basePrice.toLocaleString()}
               </span>
             )}
           </div>

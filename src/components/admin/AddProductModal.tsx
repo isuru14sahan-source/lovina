@@ -35,7 +35,7 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
   const [name, setName] = useState('');
   const [sku, setSku] = useState('LOV-' + Math.floor(1000 + Math.random() * 9000));
   const [category, setCategory] = useState<CategorySlug>('necklaces');
-  const [priceLKR, setPriceLKR] = useState('14500');
+  const [priceLKR, setPriceLKR] = useState('');
   const [discountPriceLKR, setDiscountPriceLKR] = useState('');
   const [stockQuantity, setStockQuantity] = useState('15');
   const [description, setDescription] = useState('Handcrafted luxury imitation jewelry with 18K micro gold vacuum plating designed for anti-tarnish durability.');
@@ -155,6 +155,16 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
     setVariants((prev) => prev.filter((v) => v.id !== id));
   };
 
+  const handlePriceChange = (val: string) => {
+    setPriceLKR(val);
+    const num = Number(val);
+    if (!isNaN(num) && num > 0) {
+      setVariants((prev) =>
+        prev.map((v) => ({ ...v, priceLKR: num }))
+      );
+    }
+  };
+
   const handleVariantChange = (id: string, field: keyof ProductVariant, value: any) => {
     setVariants((prev) =>
       prev.map((v) => {
@@ -162,6 +172,9 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
           const updated = { ...v, [field]: value };
           if (field === 'stock') {
             updated.inStock = Number(value) > 0;
+          }
+          if (field === 'priceLKR' && Number(value) > 0) {
+            setPriceLKR(String(value));
           }
           return updated;
         }
@@ -174,6 +187,12 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
     e.preventDefault();
     if (!name.trim()) {
       showToast('Product title is required', 'error');
+      return;
+    }
+
+    const parsedPrice = Number(priceLKR) || (variants[0]?.priceLKR ? Number(variants[0].priceLKR) : 0);
+    if (!parsedPrice || parsedPrice <= 0) {
+      showToast('Please enter a valid product price (LKR)', 'error');
       return;
     }
 
@@ -199,7 +218,7 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
       sku: sku.trim() || 'LOV-NEW-' + Math.floor(100 + Math.random() * 900),
       category,
       categoryName: category.charAt(0).toUpperCase() + category.slice(1).replace('-', ' '),
-      priceLKR: Number(priceLKR),
+      priceLKR: parsedPrice,
       discountPriceLKR: discountPriceLKR ? Number(discountPriceLKR) : undefined,
       rating: 5.0,
       reviewCount: 1,
@@ -301,7 +320,7 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
               </div>
               <div>
                 <label style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.3rem' }}>Standard Price (LKR) *</label>
-                <input type="number" required value={priceLKR} onChange={(e) => setPriceLKR(e.target.value)} style={{ width: '100%', padding: '0.65rem', borderRadius: '6px', border: '1px solid #D5CEC2' }} />
+                <input type="number" required value={priceLKR} onChange={(e) => handlePriceChange(e.target.value)} placeholder="e.g. 14500" style={{ width: '100%', padding: '0.65rem', borderRadius: '6px', border: '1px solid #D5CEC2' }} />
               </div>
               <div>
                 <label style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.3rem' }}>Discount Price (LKR)</label>
