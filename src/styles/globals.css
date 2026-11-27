@@ -250,14 +250,16 @@ img {
   }
 }
 
+@media (max-width: 1080px) {
+  .desktop-only-nav {
+    display: none !important;
+  }
+}
+
 /* Mobile Screens (< 768px) */
 @media (max-width: 768px) {
   html {
     font-size: 15px;
-  }
-
-  .desktop-only-nav {
-    display: none !important;
   }
 
   .hero-banner-box {

@@ -422,7 +422,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             {
               title: 'Tennis Bracelets',
               slug: 'bracelets' as CategorySlug,
-              img: 'https://images.unsplash.com/photo-1611591475777-233ca732222e?auto=format&fit=crop&w=600&q=80',
+              img: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=600&q=80',
               subtitle: 'Double Safety Clasp'
             }
           ].map((cat) => (
