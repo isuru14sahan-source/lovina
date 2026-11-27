@@ -17,17 +17,18 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onBackToShop, onOrde
   const { showToast } = useToast();
 
   const [address, setAddress] = useState<CustomerAddress>({
-    fullName: 'Kasun Perera',
-    phone: '+94 77 123 4567',
-    street: '45/2 Cinnamon Gardens',
-    city: 'Colombo 07',
-    postalCode: '00700',
+    fullName: '',
+    phone: '',
+    street: '',
+    city: '',
+    postalCode: '',
     country: 'Sri Lanka'
   });
 
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'cod'>('cod');
+  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'card'>('cod');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderConfirmed, setOrderConfirmed] = useState(false);
+  const [placedOrder, setPlacedOrder] = useState<Order | null>(null);
   const [placedOrderNumber, setPlacedOrderNumber] = useState('');
   const [placedTrackingNumber, setPlacedTrackingNumber] = useState('');
 
@@ -86,6 +87,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onBackToShop, onOrde
       await apiService.submitOrder(newOrder);
     } catch {}
 
+    setPlacedOrder(newOrder);
     setPlacedOrderNumber(generatedOrderNum);
     setPlacedTrackingNumber(trackingNum);
     setIsSubmitting(false);
@@ -95,6 +97,32 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onBackToShop, onOrde
   };
 
   if (orderConfirmed) {
+    const finalOrder = placedOrder;
+    const finalTotal = finalOrder ? finalOrder.totalAmountLKR : 0;
+    const finalPayment = finalOrder?.paymentMethod === 'card' ? 'Online Bank Transfer / Card' : 'Cash on Delivery (COD)';
+    const finalItems = finalOrder?.items || [];
+
+    const itemsSummaryText = finalItems.length > 0
+      ? finalItems
+          .map((it) => `• ${it.quantity}x ${it.productName}${it.variantColor ? ` (${it.variantColor})` : ''} - LKR ${(it.unitPrice * it.quantity).toLocaleString()}`)
+          .join('\n')
+      : '• Lovina Luxury Jewellery Piece';
+
+    const whatsappMessage = encodeURIComponent(
+      `Hi Lovina! I just placed an order on your website:\n\n` +
+      `*Order Reference:* #${finalOrder?.orderNumber || placedOrderNumber}\n` +
+      `*Tracking ID:* ${finalOrder?.trackingNumber || placedTrackingNumber}\n\n` +
+      `*Items Ordered:*\n` +
+      `${itemsSummaryText}\n\n` +
+      `*Total Amount:* LKR ${finalTotal.toLocaleString()}\n` +
+      `*Payment Method:* ${finalPayment}\n\n` +
+      `*Customer Details:*\n` +
+      `• Name: ${finalOrder?.shippingAddress.fullName || address.fullName}\n` +
+      `• Phone: ${finalOrder?.shippingAddress.phone || address.phone}\n` +
+      `• Address: ${finalOrder?.shippingAddress.street || address.street}, ${finalOrder?.shippingAddress.city || address.city}\n\n` +
+      `Please confirm my order and courier dispatch!`
+    );
+
     return (
       <div style={{ maxWidth: '640px', margin: '4rem auto', padding: '3rem 2rem', backgroundColor: '#FFFFFF', borderRadius: '12px', border: '1px solid #E8E3D9', textAlign: 'center', boxShadow: '0 10px 30px rgba(0,0,0,0.08)' }}>
         <div style={{ width: '72px', height: '72px', borderRadius: '50%', backgroundColor: '#FAF7F2', border: '2px solid #D4AF37', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
@@ -102,7 +130,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onBackToShop, onOrde
         </div>
 
         <span style={{ fontSize: '0.8rem', color: '#AA820A', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 700 }}>
-          Payment Authorized & Synced to Cloud
+          Order Confirmed & Stored
         </span>
 
         <h1 style={{ fontFamily: "'Cinzel', serif", fontSize: '2.2rem', color: '#121212', margin: '0.5rem 0' }}>
@@ -110,7 +138,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onBackToShop, onOrde
         </h1>
 
         <p style={{ fontSize: '0.95rem', color: '#555', marginBottom: '1.5rem' }}>
-          Your order <strong>#{placedOrderNumber}</strong> has been received and stored in our central system.
+          Your order <strong>#{finalOrder?.orderNumber || placedOrderNumber}</strong> has been received and stored in our central system.
         </p>
 
         {/* Order Details & Tracking Badges */}
@@ -118,32 +146,37 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onBackToShop, onOrde
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', paddingBottom: '1rem', marginBottom: '1rem', borderBottom: '1px solid #E8E3D9' }}>
             <div>
               <span style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase', display: 'block' }}>Order Reference</span>
-              <strong style={{ fontSize: '1.1rem', color: '#121212' }}>#{placedOrderNumber}</strong>
+              <strong style={{ fontSize: '1.1rem', color: '#121212' }}>#{finalOrder?.orderNumber || placedOrderNumber}</strong>
             </div>
             <div>
               <span style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase', display: 'block' }}>Courier Waybill / Tracking ID</span>
-              <strong style={{ fontSize: '1.1rem', color: '#AA820A' }}>{placedTrackingNumber}</strong>
+              <strong style={{ fontSize: '1.1rem', color: '#AA820A' }}>{finalOrder?.trackingNumber || placedTrackingNumber}</strong>
+            </div>
+          </div>
+
+          <h4 style={{ fontSize: '0.9rem', fontWeight: 700, marginBottom: '0.5rem' }}>Ordered Items:</h4>
+          <div style={{ marginBottom: '1rem', paddingBottom: '0.85rem', borderBottom: '1px solid #E8E3D9' }}>
+            {finalItems.map((it, idx) => (
+              <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.35rem', color: '#333' }}>
+                <span>• {it.quantity}x {it.productName} {it.variantColor ? `(${it.variantColor})` : ''}</span>
+                <strong style={{ color: '#AA820A' }}>LKR {(it.unitPrice * it.quantity).toLocaleString()}</strong>
+              </div>
+            ))}
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px dashed #D5CEC2', fontWeight: 700, fontSize: '0.95rem' }}>
+              <span>Total Payable:</span>
+              <span style={{ color: '#AA820A' }}>LKR {finalTotal.toLocaleString()}</span>
             </div>
           </div>
 
           <h4 style={{ fontSize: '0.9rem', fontWeight: 700, marginBottom: '0.5rem' }}>Shipping Summary:</h4>
-          <p style={{ margin: '0 0 0.3rem 0', color: '#333' }}><strong>Recipient:</strong> {address.fullName} ({address.phone})</p>
-          <p style={{ margin: '0 0 0.3rem 0', color: '#333' }}><strong>Address:</strong> {address.street}, {address.city}, {address.postalCode}</p>
-          <p style={{ margin: 0, color: '#333' }}><strong>Payment:</strong> {paymentMethod === 'card' ? 'Visa/Mastercard Online (Paid)' : 'Cash on Delivery (COD)'}</p>
+          <p style={{ margin: '0 0 0.3rem 0', color: '#333' }}><strong>Recipient:</strong> {finalOrder?.shippingAddress.fullName || address.fullName} ({finalOrder?.shippingAddress.phone || address.phone})</p>
+          <p style={{ margin: '0 0 0.3rem 0', color: '#333' }}><strong>Address:</strong> {finalOrder?.shippingAddress.street || address.street}, {finalOrder?.shippingAddress.city || address.city}</p>
+          <p style={{ margin: 0, color: '#333' }}><strong>Payment:</strong> {finalPayment}</p>
         </div>
 
         {/* Instant WhatsApp Order Notification / Confirmation Button */}
         <a
-          href={`https://wa.me/94712875731?text=${encodeURIComponent(
-            `Hi Lovina! I just placed an order on your website:\n\n` +
-            `*Order Reference:* #${placedOrderNumber}\n` +
-            `*Tracking ID:* ${placedTrackingNumber}\n` +
-            `*Recipient:* ${address.fullName} (${address.phone})\n` +
-            `*Address:* ${address.street}, ${address.city}\n` +
-            `*Payment:* ${paymentMethod === 'card' ? 'Online Card' : 'Cash on Delivery (COD)'}\n` +
-            `*Total Amount:* LKR ${totalLKR.toLocaleString()}\n\n` +
-            `Please confirm my order and courier dispatch!`
-          )}`}
+          href={`https://wa.me/94712875731?text=${whatsappMessage}`}
           target="_blank"
           rel="noopener noreferrer"
           style={{
@@ -167,7 +200,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onBackToShop, onOrde
           <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.174.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.158.572 4.184 1.574 5.938l-1.674 6.115 6.273-1.644c1.706.945 3.666 1.491 5.827 1.491 6.627 0 12-5.373 12-12s-5.373-12-12-12z" />
           </svg>
-          <span>Confirm on WhatsApp (071 287 5731)</span>
+          <span>Send Order Summary to WhatsApp (071 287 5731)</span>
         </a>
 
         <button onClick={onOrderComplete} className="btn-gold" style={{ width: '100%', padding: '1rem' }}>
@@ -206,6 +239,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onBackToShop, onOrde
                 <input
                   type="text"
                   required
+                  placeholder="e.g. Kasun Sahan"
                   value={address.fullName}
                   onChange={(e) => handleFormChange('fullName', e.target.value)}
                   style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #D5CEC2', outline: 'none' }}
@@ -213,10 +247,11 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onBackToShop, onOrde
               </div>
 
               <div>
-                <label style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>Phone Number *</label>
+                <label style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>Phone Number (WhatsApp) *</label>
                 <input
                   type="tel"
                   required
+                  placeholder="e.g. 077 123 4567 / 071 287 5731"
                   value={address.phone}
                   onChange={(e) => handleFormChange('phone', e.target.value)}
                   style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #D5CEC2', outline: 'none' }}
@@ -224,10 +259,11 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onBackToShop, onOrde
               </div>
 
               <div>
-                <label style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>City *</label>
+                <label style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>City / District *</label>
                 <input
                   type="text"
                   required
+                  placeholder="e.g. Colombo 07, Kandy, Galle"
                   value={address.city}
                   onChange={(e) => handleFormChange('city', e.target.value)}
                   style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #D5CEC2', outline: 'none' }}
@@ -235,10 +271,11 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onBackToShop, onOrde
               </div>
 
               <div style={{ gridColumn: 'span 2' }}>
-                <label style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>Street Address *</label>
+                <label style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.4rem' }}>Delivery Street Address *</label>
                 <input
                   type="text"
                   required
+                  placeholder="e.g. No. 45/2, Temple Road"
                   value={address.street}
                   onChange={(e) => handleFormChange('street', e.target.value)}
                   style={{ width: '100%', padding: '0.75rem', borderRadius: '4px', border: '1px solid #D5CEC2', outline: 'none' }}
@@ -261,6 +298,34 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onBackToShop, onOrde
                   gap: '1rem',
                   padding: '1rem 1.25rem',
                   borderRadius: '6px',
+                  border: paymentMethod === 'cod' ? '2px solid #D4AF37' : '1px solid #E8E3D9',
+                  backgroundColor: paymentMethod === 'cod' ? '#FAF7F2' : '#FFFFFF',
+                  cursor: 'pointer'
+                }}
+              >
+                <input
+                  type="radio"
+                  name="payment"
+                  checked={paymentMethod === 'cod'}
+                  onChange={() => setPaymentMethod('cod')}
+                  style={{ accentColor: '#D4AF37' }}
+                />
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>Cash on Delivery (COD)</span>
+                    <span style={{ fontSize: '0.68rem', padding: '0.15rem 0.5rem', backgroundColor: '#E8F5E9', color: '#2B7A4B', borderRadius: '12px', fontWeight: 700 }}>RECOMMENDED</span>
+                  </div>
+                  <span style={{ fontSize: '0.75rem', color: '#6E6E6E', display: 'block', marginTop: '0.2rem' }}>Pay upon doorstep parcel delivery anywhere in Sri Lanka</span>
+                </div>
+              </label>
+
+              <label
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '1rem',
+                  padding: '1rem 1.25rem',
+                  borderRadius: '6px',
                   border: paymentMethod === 'card' ? '2px solid #D4AF37' : '1px solid #E8E3D9',
                   backgroundColor: paymentMethod === 'card' ? '#FAF7F2' : '#FFFFFF',
                   cursor: 'pointer'
@@ -274,35 +339,10 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onBackToShop, onOrde
                   style={{ accentColor: '#D4AF37' }}
                 />
                 <div style={{ flex: 1 }}>
-                  <span style={{ fontWeight: 700, fontSize: '0.9rem', display: 'block' }}>Credit / Debit Card (PayHere / Stripe)</span>
-                  <span style={{ fontSize: '0.75rem', color: '#6E6E6E' }}>Visa, Mastercard, AMEX encrypted security</span>
+                  <span style={{ fontWeight: 700, fontSize: '0.9rem', display: 'block' }}>Online Bank Transfer / Card</span>
+                  <span style={{ fontSize: '0.75rem', color: '#6E6E6E' }}>Transfer via Bank deposit or confirm slip via WhatsApp (071 287 5731)</span>
                 </div>
                 <Lock size={18} color="#AA820A" />
-              </label>
-
-              <label
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '1rem',
-                  padding: '1rem 1.25rem',
-                  borderRadius: '6px',
-                  border: paymentMethod === 'cod' ? '2px solid #D4AF37' : '1px solid #E8E3D9',
-                  backgroundColor: paymentMethod === 'cod' ? '#FAF7F2' : '#FFFFFF',
-                  cursor: 'pointer'
-                }}
-              >
-                <input
-                  type="radio"
-                  name="payment"
-                  checked={paymentMethod === 'cod'}
-                  onChange={() => setPaymentMethod('cod')}
-                  style={{ accentColor: '#D4AF37' }}
-                />
-                <div>
-                  <span style={{ fontWeight: 700, fontSize: '0.9rem', display: 'block' }}>Cash on Delivery (COD)</span>
-                  <span style={{ fontSize: '0.75rem', color: '#6E6E6E' }}>Pay upon doorstep parcel receipt</span>
-                </div>
               </label>
             </div>
           </div>
