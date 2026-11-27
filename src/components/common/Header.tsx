@@ -24,7 +24,7 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const { cart, toggleCart } = useCart();
   const { wishlistCount } = useWishlist();
-  const { user, loginAsCustomer } = useAuth();
+  const { user, isAdmin, loginAsCustomer } = useAuth();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -112,15 +112,16 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
 
           {/* Admin Clearance Portal Button (Desktop only in header, moved to drawer on mobile) */}
+          {/* Login / Dashboard Button */}
           <button
             onClick={() => onNavigate('admin')}
             className="desktop-only-admin-btn"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '0.3rem',
-              padding: '0.35rem 0.75rem',
-              fontSize: '0.75rem',
+              gap: '0.35rem',
+              padding: '0.35rem 0.8rem',
+              fontSize: '0.78rem',
               borderRadius: '20px',
               backgroundColor: '#FAF7F2',
               color: '#AA820A',
@@ -128,10 +129,10 @@ export const Header: React.FC<HeaderProps> = ({
               border: '1px solid #D4AF37',
               cursor: 'pointer'
             }}
-            title="Admin Management Portal"
+            title={isAdmin ? 'Executive Dashboard' : 'Login'}
           >
-            <Shield size={14} />
-            <span>Admin Portal</span>
+            <UserIcon size={14} />
+            <span>{isAdmin ? 'Dashboard' : 'Login'}</span>
           </button>
 
           {/* User Profile */}
@@ -254,7 +255,7 @@ export const Header: React.FC<HeaderProps> = ({
                 onClick={() => { onNavigate('admin'); setMobileMenuOpen(false); }}
                 style={{ textAlign: 'left', fontSize: '0.9rem', color: '#AA820A', fontWeight: 600 }}
               >
-                Staff Admin Portal
+                {isAdmin ? 'Admin Dashboard' : 'Login'}
               </button>
             </div>
           </div>

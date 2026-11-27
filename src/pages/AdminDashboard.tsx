@@ -203,7 +203,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 boxShadow: '0 4px 15px rgba(212, 175, 55, 0.3)'
               }}
             >
-              <span>{isSubmitting ? 'Verifying Credentials...' : 'Sign In to Admin Portal'}</span>
+              <span>{isSubmitting ? 'Verifying...' : 'Sign In'}</span>
             </button>
           </form>
 
