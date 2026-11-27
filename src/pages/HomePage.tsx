@@ -142,10 +142,6 @@ export const HomePage: React.FC<HomePageProps> = ({
 
         {/* Foreground Content Container */}
         <div style={{ position: 'relative', zIndex: 2, maxWidth: '640px' }}>
-          <span style={{ backgroundColor: 'rgba(212, 175, 55, 0.25)', color: '#D4AF37', border: '1px solid #D4AF37', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.15em', padding: '6px 14px', borderRadius: '20px', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '6px', marginBottom: '1.25rem', backdropFilter: 'blur(4px)' }}>
-            <Sparkles size={14} /> {hero.badgeText}
-          </span>
-
           <h1 className="hero-banner-title" style={{ fontFamily: "'Cinzel', serif", fontSize: '3.2rem', fontWeight: 700, lineHeight: 1.15, marginBottom: '1.25rem', textShadow: '0 4px 20px rgba(0,0,0,0.6)' }}>
             {hero.title}
           </h1>
