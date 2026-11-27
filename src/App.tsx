@@ -15,6 +15,7 @@ import { CartDrawer } from './components/cart/CartDrawer';
 import { WishlistDrawer } from './components/wishlist/WishlistDrawer';
 import { QuickViewModal } from './components/product/QuickViewModal';
 import { LiveSearchModal } from './components/common/LiveSearchModal';
+import { FloatingWhatsApp } from './components/common/FloatingWhatsApp';
 
 import { HomePage } from './pages/HomePage';
 import { ShopPage } from './pages/ShopPage';
@@ -292,6 +293,9 @@ export const AppContent: React.FC = () => {
         onClose={() => setQuickViewProduct(null)}
         onSelectProduct={handleSelectProduct}
       />
+
+      {/* Floating WhatsApp Concierge Widget */}
+      {currentPage !== 'admin' && <FloatingWhatsApp />}
 
       {/* Toast Notification Layer */}
       <ToastContainer />

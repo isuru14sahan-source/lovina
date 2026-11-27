@@ -77,7 +77,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onNavigate }) 
             <li><a href="#" style={{ color: '#C0C0C0', fontSize: '0.85rem' }}>Jewellery Care Guide</a></li>
             <li><a href="#" style={{ color: '#C0C0C0', fontSize: '0.85rem' }}>Ring Sizing Chart</a></li>
             <li><a href="#" style={{ color: '#C0C0C0', fontSize: '0.85rem' }}>Returns & Exchanges</a></li>
-            <li><button onClick={() => onNavigate('admin')} style={{ color: '#D4AF37', fontSize: '0.85rem', fontWeight: 600 }}>Staff Admin Login</button></li>
+            <li><button onClick={() => onNavigate('admin')} style={{ color: '#D4AF37', fontSize: '0.85rem', fontWeight: 600 }}>Staff Login</button></li>
           </ul>
         </div>
 
@@ -89,10 +89,15 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onNavigate }) 
               <MapPin size={16} color="#D4AF37" />
               <span>Flagship Store: 100 Galle Road, Colombo 03</span>
             </p>
-            <p style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0 }}>
-              <Phone size={16} color="#D4AF37" />
-              <span>+94 11 234 5678 / +94 77 123 4567</span>
-            </p>
+            <a
+              href="https://wa.me/94712875731?text=Hi%20Lovina!"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0, color: '#C0C0C0', textDecoration: 'none' }}
+            >
+              <Phone size={16} color="#25D366" />
+              <span>+94 71 287 5731 (WhatsApp Hotline)</span>
+            </a>
             <p style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0 }}>
               <Mail size={16} color="#D4AF37" />
               <span>concierge@lovina.lk</span>
