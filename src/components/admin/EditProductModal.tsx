@@ -20,43 +20,43 @@ export const EditProductModal: React.FC<EditProductModalProps> = ({
 }) => {
   const { showToast } = useToast();
 
-  if (!isOpen || !product) return null;
-
   // Basic Info
-  const [name, setName] = useState(product.name);
-  const [sku, setSku] = useState(product.sku);
-  const [priceLKR, setPriceLKR] = useState(String(product.priceLKR));
-  const [discountPriceLKR, setDiscountPriceLKR] = useState(product.discountPriceLKR ? String(product.discountPriceLKR) : '');
-  const [category, setCategory] = useState<CategorySlug>(product.category);
-  const [stockQuantity, setStockQuantity] = useState(String(product.stockQuantity));
-  const [description, setDescription] = useState(product.description);
-  const [detailsText, setDetailsText] = useState(product.details ? product.details.join(', ') : '');
+  const [name, setName] = useState(product?.name || '');
+  const [sku, setSku] = useState(product?.sku || '');
+  const [priceLKR, setPriceLKR] = useState(String(product?.priceLKR || ''));
+  const [discountPriceLKR, setDiscountPriceLKR] = useState(product?.discountPriceLKR ? String(product.discountPriceLKR) : '');
+  const [category, setCategory] = useState<CategorySlug>(product?.category || 'necklaces');
+  const [stockQuantity, setStockQuantity] = useState(String(product?.stockQuantity || ''));
+  const [description, setDescription] = useState(product?.description || '');
+  const [detailsText, setDetailsText] = useState(product?.details ? product.details.join(', ') : '');
 
   // Specs & Attributes
-  const [material, setMaterial] = useState<MetalType>(product.attributes?.material || '18K Gold Plated');
-  const [gemstone, setGemstone] = useState<GemstoneType>(product.attributes?.gemstone || 'Cubic Zirconia');
-  const [plating, setPlating] = useState(product.attributes?.plating || '18K Micro Gold Vacuum Plating');
-  const [warranty, setWarranty] = useState(product.attributes?.warranty || '1 Year Anti-Tarnish Warranty');
+  const [material, setMaterial] = useState<MetalType>(product?.attributes?.material || '18K Gold Plated');
+  const [gemstone, setGemstone] = useState<GemstoneType>(product?.attributes?.gemstone || 'Cubic Zirconia');
+  const [plating, setPlating] = useState(product?.attributes?.plating || '18K Micro Gold Vacuum Plating');
+  const [warranty, setWarranty] = useState(product?.attributes?.warranty || '1 Year Anti-Tarnish Warranty');
 
   // Badges & Flags
-  const [isFeatured, setIsFeatured] = useState(!!product.isFeatured);
-  const [isNewArrival, setIsNewArrival] = useState(!!product.isNewArrival);
-  const [isBestSeller, setIsBestSeller] = useState(!!product.isBestSeller);
+  const [isFeatured, setIsFeatured] = useState(!!product?.isFeatured);
+  const [isNewArrival, setIsNewArrival] = useState(!!product?.isNewArrival);
+  const [isBestSeller, setIsBestSeller] = useState(!!product?.isBestSeller);
 
   // Multiple Images Support (Hero + Gallery URLs)
-  const [mainHeroImage, setMainHeroImage] = useState(product.images[0] || '/assets/necklace.jpg');
-  const [galleryImage1, setGalleryImage1] = useState(product.images[1] || '');
-  const [galleryImage2, setGalleryImage2] = useState(product.images[2] || '');
-  const [galleryImage3, setGalleryImage3] = useState(product.images[3] || '');
+  const [mainHeroImage, setMainHeroImage] = useState(product?.images?.[0] || '/assets/necklace.jpg');
+  const [galleryImage1, setGalleryImage1] = useState(product?.images?.[1] || '');
+  const [galleryImage2, setGalleryImage2] = useState(product?.images?.[2] || '');
+  const [galleryImage3, setGalleryImage3] = useState(product?.images?.[3] || '');
 
   // Product Variations Engine
   const [variants, setVariants] = useState<ProductVariant[]>(
-    product.variants && product.variants.length > 0
+    product?.variants && product.variants.length > 0
       ? product.variants
-      : [{ id: 'var-1', color: 'Standard Finish', colorHex: '#D4AF37', size: 'Standard', stock: product.stockQuantity, inStock: true }]
+      : [{ id: 'var-1', color: 'Standard Finish', colorHex: '#D4AF37', size: 'Standard', stock: product?.stockQuantity || 10, inStock: true }]
   );
 
   const [isUploading, setIsUploading] = useState(false);
+
+  if (!isOpen || !product) return null;
 
   // Handle direct file upload to Supabase Storage (with fallback to local preview)
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, targetField: 'main' | 'g1' | 'g2' | 'g3') => {
@@ -71,15 +71,21 @@ export const EditProductModal: React.FC<EditProductModalProps> = ({
     setIsUploading(true);
 
     try {
+      let uploadedUrl: string | null = null;
       if (supabaseService.isReady()) {
-        const publicUrl = await supabaseService.uploadImage(file);
-        if (publicUrl) {
-          if (targetField === 'main') setMainHeroImage(publicUrl);
-          if (targetField === 'g1') setGalleryImage1(publicUrl);
-          if (targetField === 'g2') setGalleryImage2(publicUrl);
-          if (targetField === 'g3') setGalleryImage3(publicUrl);
-          showToast(`Photo updated to Supabase Storage successfully!`, 'success');
+        try {
+          uploadedUrl = await supabaseService.uploadImage(file);
+        } catch (storageErr) {
+          console.warn('Supabase storage upload failed, falling back to local FileReader:', storageErr);
         }
+      }
+
+      if (uploadedUrl) {
+        if (targetField === 'main') setMainHeroImage(uploadedUrl);
+        if (targetField === 'g1') setGalleryImage1(uploadedUrl);
+        if (targetField === 'g2') setGalleryImage2(uploadedUrl);
+        if (targetField === 'g3') setGalleryImage3(uploadedUrl);
+        showToast(`Photo updated to Supabase Storage successfully!`, 'success');
       } else {
         const reader = new FileReader();
         reader.onload = (uploadEvent) => {
@@ -88,12 +94,12 @@ export const EditProductModal: React.FC<EditProductModalProps> = ({
           if (targetField === 'g1') setGalleryImage1(base64);
           if (targetField === 'g2') setGalleryImage2(base64);
           if (targetField === 'g3') setGalleryImage3(base64);
-          showToast('Image loaded! (Add Supabase keys to .env for cloud CDN storage)', 'info');
+          showToast('Image loaded successfully from device!', 'success');
         };
         reader.readAsDataURL(file);
       }
     } catch (err: any) {
-      showToast(`Upload failed: ${err.message || 'Please check Supabase settings'}`, 'error');
+      showToast(`Upload failed: ${err.message || 'Please check file format'}`, 'error');
     } finally {
       setIsUploading(false);
     }

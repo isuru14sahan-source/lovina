@@ -646,19 +646,23 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       </div>
 
       {/* Product Edit Modal Component */}
-      <EditProductModal
-        isOpen={!!editProduct}
-        onClose={() => setEditProduct(null)}
-        product={editProduct}
-        onSave={onEditProduct}
-      />
+      {editProduct && (
+        <EditProductModal
+          isOpen={true}
+          onClose={() => setEditProduct(null)}
+          product={editProduct}
+          onSave={onEditProduct}
+        />
+      )}
 
       {/* Product Registration Modal Component */}
-      <AddProductModal
-        isOpen={showAddModal}
-        onClose={() => setShowAddModal(false)}
-        onAddProduct={onAddProduct}
-      />
+      {showAddModal && (
+        <AddProductModal
+          isOpen={true}
+          onClose={() => setShowAddModal(false)}
+          onAddProduct={onAddProduct}
+        />
+      )}
 
       {/* Hero Banner Video & Media Modal Component */}
       <HeroMediaModal

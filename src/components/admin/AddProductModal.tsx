@@ -31,8 +31,6 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
   const { showToast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  if (!isOpen) return null;
-
   // Basic Info
   const [name, setName] = useState('');
   const [sku, setSku] = useState('LOV-' + Math.floor(1000 + Math.random() * 9000));
@@ -85,6 +83,8 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
+  if (!isOpen) return null;
+
   // Handle direct file upload to Supabase Storage (with fallback to local preview)
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, targetField: 'main' | 'g1' | 'g2' | 'g3') => {
     const file = e.target.files?.[0];
@@ -99,15 +99,21 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
     setUploadProgress(20);
 
     try {
+      let uploadedUrl: string | null = null;
       if (supabaseService.isReady()) {
-        const publicUrl = await supabaseService.uploadImage(file);
-        if (publicUrl) {
-          if (targetField === 'main') setMainHeroImage(publicUrl);
-          if (targetField === 'g1') setGalleryImage1(publicUrl);
-          if (targetField === 'g2') setGalleryImage2(publicUrl);
-          if (targetField === 'g3') setGalleryImage3(publicUrl);
-          showToast(`Photo uploaded to Supabase Storage successfully!`, 'success');
+        try {
+          uploadedUrl = await supabaseService.uploadImage(file);
+        } catch (storageErr) {
+          console.warn('Supabase storage upload failed, falling back to local FileReader:', storageErr);
         }
+      }
+
+      if (uploadedUrl) {
+        if (targetField === 'main') setMainHeroImage(uploadedUrl);
+        if (targetField === 'g1') setGalleryImage1(uploadedUrl);
+        if (targetField === 'g2') setGalleryImage2(uploadedUrl);
+        if (targetField === 'g3') setGalleryImage3(uploadedUrl);
+        showToast(`Photo uploaded to Supabase Storage successfully!`, 'success');
       } else {
         const reader = new FileReader();
         reader.onload = (uploadEvent) => {
@@ -116,7 +122,7 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
           if (targetField === 'g1') setGalleryImage1(base64);
           if (targetField === 'g2') setGalleryImage2(base64);
           if (targetField === 'g3') setGalleryImage3(base64);
-          showToast('Image loaded! (Add Supabase keys to .env for cloud CDN storage)', 'info');
+          showToast('Image loaded successfully from device!', 'success');
         };
         reader.readAsDataURL(file);
       }
