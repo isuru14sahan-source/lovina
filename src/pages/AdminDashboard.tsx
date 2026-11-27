@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Product, Order, CategorySlug, MetalType, GemstoneType, HeroBannerConfig, DEFAULT_HERO_CONFIG } from '../types';
 import { INITIAL_ORDERS } from '../services/mockData';
-import { TrendingUp, Package, AlertTriangle, Plus, Shield, DollarSign, Layers, Lock, Trash2, Edit, Video, Database, Sparkles, Key, Mail, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
+import { TrendingUp, Package, AlertTriangle, Plus, Shield, DollarSign, Layers, Lock, Trash2, Edit, Video, Database, Sparkles, Key, Mail, Eye, EyeOff, CheckCircle2, Menu } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { AdminSidebar } from '../components/admin/AdminSidebar';
@@ -40,6 +40,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   const [orders, setOrders] = useState<Order[]>(INITIAL_ORDERS);
   const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'orders' | 'archive'>('overview');
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showHeroModal, setShowHeroModal] = useState(false);
   const [editProduct, setEditProduct] = useState<Product | null>(null);
@@ -325,77 +326,144 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   };
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#FAF7F2' }}>
-      {/* Super Admin Modular Sidebar Navigation */}
-      <AdminSidebar
-        activeTab={activeTab}
-        onSelectTab={(tab) => setActiveTab(tab)}
-        onLock={logout}
-        onNavigateShop={onNavigateShop}
-      />
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#FAF7F2' }}>
+      {/* Mobile Top Navigation Bar (Shown on phones <= 900px) */}
+      <div
+        className="mobile-admin-topbar"
+        style={{
+          display: 'none',
+          backgroundColor: '#121212',
+          color: '#FFFFFF',
+          padding: '0.85rem 1rem',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          borderBottom: '1px solid rgba(212,175,55,0.4)',
+          position: 'sticky',
+          top: 0,
+          zIndex: 900
+        }}
+      >
+        <button
+          onClick={() => setMobileSidebarOpen(true)}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.45rem',
+            backgroundColor: 'rgba(212, 175, 55, 0.15)',
+            border: '1px solid #D4AF37',
+            color: '#D4AF37',
+            padding: '0.45rem 0.8rem',
+            borderRadius: '6px',
+            fontSize: '0.82rem',
+            fontWeight: 600,
+            cursor: 'pointer'
+          }}
+          aria-label="Open Admin Menu"
+        >
+          <Menu size={18} />
+          <span>Menu</span>
+        </button>
 
-      {/* Main Admin Dashboard Viewport */}
-      <main style={{ flex: 1, padding: '2.5rem', overflowY: 'auto' }}>
-        {/* Top Executive Header Bar */}
-        <div style={{ backgroundColor: '#121212', color: '#FFFFFF', padding: '1.75rem 2rem', borderRadius: '12px', marginBottom: '2rem', border: '1px solid #D4AF37', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-          <div>
-            <span style={{ color: '#D4AF37', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <Shield size={14} /> Lovina Super Admin Clearance Active
-            </span>
-            <h1 style={{ fontFamily: "'Cinzel', serif", fontSize: '2rem', margin: '0.3rem 0 0 0' }}>
-              {activeTab === 'overview' && 'Executive Overview Dashboard'}
-              {activeTab === 'products' && 'Product Management Index'}
-              {activeTab === 'orders' && 'Order Fulfillment & Logistics'}
-              {activeTab === 'archive' && 'Archived Products'}
-            </h1>
-          </div>
-
-          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              padding: '0.5rem 0.9rem',
-              borderRadius: '20px',
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              backgroundColor: supabaseService.isReady() ? 'rgba(43, 122, 75, 0.2)' : 'rgba(212, 175, 55, 0.15)',
-              color: supabaseService.isReady() ? '#4ADE80' : '#D4AF37',
-              border: `1px solid ${supabaseService.isReady() ? '#2B7A4B' : '#D4AF37'}`
-            }}>
-              <Database size={14} />
-              <span>{supabaseService.isReady() ? 'Supabase Cloud Synced' : 'Local Mode (Supabase Pending)'}</span>
-            </div>
-
-            <button
-              onClick={() => setShowHeroModal(true)}
-              className="btn-outline"
-              style={{
-                borderColor: '#D4AF37',
-                color: '#D4AF37',
-                padding: '0.65rem 1.25rem',
-                fontSize: '0.82rem',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.45rem',
-                cursor: 'pointer'
-              }}
-            >
-              <Video size={16} />
-              <span>Homepage Video Banner</span>
-            </button>
-
-            <button onClick={() => setShowAddModal(true)} className="btn-gold" style={{ padding: '0.75rem 1.5rem', fontSize: '0.85rem' }}>
-              <Plus size={18} />
-              <span>Register New Product</span>
-            </button>
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <Shield size={16} color="#D4AF37" />
+          <span style={{ fontFamily: "'Cinzel', serif", fontSize: '1.1rem', fontWeight: 700, color: '#D4AF37', letterSpacing: '0.05em' }}>
+            LOVINA
+          </span>
         </div>
 
-        {/* Overview Analytics KPI Cards */}
-        {activeTab === 'overview' && (
-          <div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
+        <button
+          onClick={logout}
+          style={{
+            backgroundColor: '#1E1E1E',
+            border: '1px solid #444',
+            color: '#E53E3E',
+            padding: '0.45rem 0.75rem',
+            borderRadius: '6px',
+            fontSize: '0.78rem',
+            fontWeight: 600,
+            cursor: 'pointer'
+          }}
+        >
+          Lock
+        </button>
+      </div>
+
+      <div style={{ display: 'flex', flex: 1 }}>
+        {/* Super Admin Modular Sidebar Navigation */}
+        <AdminSidebar
+          activeTab={activeTab}
+          onSelectTab={(tab) => {
+            setActiveTab(tab);
+            setMobileSidebarOpen(false);
+          }}
+          onLock={logout}
+          onNavigateShop={onNavigateShop}
+          isMobileOpen={mobileSidebarOpen}
+          onCloseMobile={() => setMobileSidebarOpen(false)}
+        />
+
+        {/* Main Admin Dashboard Viewport */}
+        <main className="admin-main-viewport" style={{ flex: 1, padding: '2.5rem', overflowY: 'auto' }}>
+          {/* Top Executive Header Bar */}
+          <div className="admin-header-card" style={{ backgroundColor: '#121212', color: '#FFFFFF', padding: '1.75rem 2rem', borderRadius: '12px', marginBottom: '2rem', border: '1px solid #D4AF37', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+            <div>
+              <span style={{ color: '#D4AF37', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <Shield size={14} /> Lovina Super Admin Clearance Active
+              </span>
+              <h1 className="admin-header-title" style={{ fontFamily: "'Cinzel', serif", fontSize: '2rem', margin: '0.3rem 0 0 0' }}>
+                {activeTab === 'overview' && 'Executive Overview Dashboard'}
+                {activeTab === 'products' && 'Product Management Index'}
+                {activeTab === 'orders' && 'Order Fulfillment & Logistics'}
+                {activeTab === 'archive' && 'Archived Products'}
+              </h1>
+            </div>
+
+            <div className="admin-header-actions" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                padding: '0.5rem 0.9rem',
+                borderRadius: '20px',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                backgroundColor: supabaseService.isReady() ? 'rgba(43, 122, 75, 0.2)' : 'rgba(212, 175, 55, 0.15)',
+                color: supabaseService.isReady() ? '#4ADE80' : '#D4AF37',
+                border: `1px solid ${supabaseService.isReady() ? '#2B7A4B' : '#D4AF37'}`
+              }}>
+                <Database size={14} />
+                <span>{supabaseService.isReady() ? 'Supabase Cloud Synced' : 'Local Mode (Supabase Pending)'}</span>
+              </div>
+
+              <button
+                onClick={() => setShowHeroModal(true)}
+                className="btn-outline"
+                style={{
+                  borderColor: '#D4AF37',
+                  color: '#D4AF37',
+                  padding: '0.65rem 1.25rem',
+                  fontSize: '0.82rem',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  cursor: 'pointer'
+                }}
+              >
+                <Video size={16} />
+                <span>Homepage Video Banner</span>
+              </button>
+
+              <button onClick={() => setShowAddModal(true)} className="btn-gold" style={{ padding: '0.75rem 1.5rem', fontSize: '0.85rem' }}>
+                <Plus size={18} />
+                <span>Register New Product</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Overview Analytics KPI Cards */}
+          {activeTab === 'overview' && (
+            <div>
+              <div className="admin-kpi-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
               <div style={{ backgroundColor: '#FFFFFF', padding: '1.5rem', borderRadius: '8px', border: '1px solid #E8E3D9', boxShadow: '0 4px 15px rgba(0,0,0,0.03)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
                   <span style={{ fontSize: '0.8rem', color: '#6E6E6E', fontWeight: 600, textTransform: 'uppercase' }}>Total Revenue</span>
@@ -575,6 +643,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
         )}
       </main>
+      </div>
 
       {/* Product Edit Modal Component */}
       <EditProductModal

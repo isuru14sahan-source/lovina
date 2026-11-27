@@ -291,6 +291,51 @@ img {
   }
 }
 
+/* Admin Mobile & Tablet Responsive Controls (<= 900px) */
+@media (max-width: 900px) {
+  .desktop-admin-sidebar {
+    display: none !important;
+  }
+
+  .mobile-admin-topbar {
+    display: flex !important;
+  }
+
+  .admin-main-viewport {
+    padding: 1.25rem 0.85rem !important;
+  }
+
+  .admin-header-card {
+    padding: 1.25rem 1rem !important;
+  }
+
+  .admin-header-title {
+    font-size: 1.4rem !important;
+  }
+
+  .admin-kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+
+  .admin-header-actions {
+    width: 100% !important;
+    flex-direction: column !important;
+  }
+
+  .admin-header-actions button {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-kpi-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 /* Custom Luxury Gold Scrollbar for Admin Tables & Containers */
 .admin-scrollable-table {
   scrollbar-width: thin;
