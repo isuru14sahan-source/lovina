@@ -291,3 +291,25 @@ img {
   }
 }
 
+/* Custom Luxury Gold Scrollbar for Admin Tables & Containers */
+.admin-scrollable-table {
+  scrollbar-width: thin;
+  scrollbar-color: #D4AF37 #F5EFE6;
+}
+.admin-scrollable-table::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.admin-scrollable-table::-webkit-scrollbar-track {
+  background: #F5EFE6;
+  border-radius: 4px;
+}
+.admin-scrollable-table::-webkit-scrollbar-thumb {
+  background: #D4AF37;
+  border-radius: 4px;
+  border: 1px solid #AA820A;
+}
+.admin-scrollable-table::-webkit-scrollbar-thumb:hover {
+  background: #AA820A;
+}
+

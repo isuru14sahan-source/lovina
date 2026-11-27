@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { CategorySlug, Product } from './types';
+import { CategorySlug, Product, HeroBannerConfig, DEFAULT_HERO_CONFIG } from './types';
 import { INITIAL_PRODUCTS } from './services/mockData';
+import { supabaseService } from './services/supabaseService';
 
 import { ToastProvider } from './context/ToastContext';
 import { AuthProvider } from './context/AuthContext';
@@ -33,7 +34,57 @@ export const AppContent: React.FC = () => {
     localStorage.setItem('lovina_products_v4', JSON.stringify(products));
   }, [products]);
 
-  const [currentPage, setCurrentPage] = useState<'home' | 'shop' | 'product-detail' | 'checkout' | 'account' | 'admin' | 'tracking'>('home');
+  // Load products from Supabase if configured
+  useEffect(() => {
+    const syncSupabase = async () => {
+      if (supabaseService.isReady()) {
+        try {
+          const remoteProducts = await supabaseService.getProducts();
+          if (remoteProducts && remoteProducts.length > 0) {
+            setProducts(remoteProducts);
+          } else if (remoteProducts && remoteProducts.length === 0) {
+            // First time connection: automatically seed catalog to Supabase
+            await supabaseService.seedProducts(INITIAL_PRODUCTS);
+          }
+        } catch (err) {
+          console.warn('Supabase sync skipped, using local cache:', err);
+        }
+      }
+    };
+    syncSupabase();
+  }, []);
+
+  const [heroConfig, setHeroConfig] = useState<HeroBannerConfig>(() => {
+    const saved = localStorage.getItem('lovina_hero_config');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (
+          parsed.videoUrl === 'https://vjs.zencdn.net/v/oceans.mp4' ||
+          !parsed.videoUrls ||
+          (parsed.videoUrls.length === 1 && parsed.videoUrls[0] === '/assets/videos/hero-jewelry.mp4')
+        ) {
+          localStorage.setItem('lovina_hero_config', JSON.stringify(DEFAULT_HERO_CONFIG));
+          return DEFAULT_HERO_CONFIG;
+        }
+        return parsed;
+      } catch {}
+    }
+    return DEFAULT_HERO_CONFIG;
+  });
+
+  const handleSaveHeroConfig = (newCfg: HeroBannerConfig) => {
+    setHeroConfig(newCfg);
+    localStorage.setItem('lovina_hero_config', JSON.stringify(newCfg));
+  };
+
+  const [currentPage, setCurrentPage] = useState<'home' | 'shop' | 'product-detail' | 'checkout' | 'account' | 'admin' | 'tracking'>(() => {
+    if (sessionStorage.getItem('lovina_admin_redirect') === 'admin' || window.location.hash.includes('access_token')) {
+      sessionStorage.removeItem('lovina_admin_redirect');
+      return 'admin';
+    }
+    return 'home';
+  });
   const [activeCategory, setActiveCategory] = useState<CategorySlug>('all');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
@@ -53,24 +104,36 @@ export const AppContent: React.FC = () => {
 
   const handleAddProduct = (newProd: Product) => {
     setProducts((prev) => [newProd, ...prev]);
+    if (supabaseService.isReady()) {
+      supabaseService.createProduct(newProd);
+    }
   };
 
   const handleEditProduct = (updated: Product) => {
     setProducts((prev) =>
       prev.map((p) => (p.id === updated.id ? updated : p))
     );
+    if (supabaseService.isReady()) {
+      supabaseService.updateProduct(updated);
+    }
   };
 
   const handleSoftDeleteProduct = (id: string) => {
     setProducts((prev) =>
       prev.map((p) => (p.id === id ? { ...p, isDeleted: true } : p))
     );
+    if (supabaseService.isReady()) {
+      supabaseService.softDeleteProduct(id);
+    }
   };
 
   const handleRestoreProduct = (id: string) => {
     setProducts((prev) =>
       prev.map((p) => (p.id === id ? { ...p, isDeleted: false } : p))
     );
+    if (supabaseService.isReady()) {
+      supabaseService.restoreProduct(id);
+    }
   };
 
   const handleAddReview = (productId: string, newReview: { name: string; rating: number; comment: string; date: string }) => {
@@ -109,6 +172,7 @@ export const AppContent: React.FC = () => {
         {currentPage === 'home' && (
           <HomePage
             products={activeProducts}
+            heroConfig={heroConfig}
             onSelectCategory={(cat) => {
               handleSelectCategory(cat);
               setCurrentPage('shop');
@@ -164,6 +228,8 @@ export const AppContent: React.FC = () => {
         {currentPage === 'admin' && (
           <AdminDashboard
             products={products}
+            heroConfig={heroConfig}
+            onSaveHeroConfig={handleSaveHeroConfig}
             onAddProduct={handleAddProduct}
             onUpdateProductStock={(id, stock) => {
               setProducts((prev) => prev.map((p) => p.id === id ? { ...p, stockQuantity: stock } : p));

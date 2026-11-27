@@ -1,6 +1,62 @@
 {
   "orders": [
     {
+      "id": "ord-1795753427524",
+      "orderNumber": "LV-14947",
+      "date": "2026-11-27",
+      "items": [
+        {
+          "productId": "lov-new-102",
+          "productName": "Princess Cushion Cut Solitaire Ring",
+          "variantColor": "925 Silver",
+          "variantSize": "US 6",
+          "unitPrice": 11900,
+          "quantity": 1,
+          "image": "/assets/cushion_ring.jpg"
+        }
+      ],
+      "shippingAddress": {
+        "fullName": "Kasun Perera",
+        "phone": "+94 77 123 4567",
+        "street": "45/2 Cinnamon Gardens",
+        "city": "Colombo 07",
+        "postalCode": "00700",
+        "country": "Sri Lanka"
+      },
+      "paymentMethod": "card",
+      "totalAmountLKR": 12400,
+      "status": "Processing",
+      "trackingNumber": "TRK-SL-506240"
+    },
+    {
+      "id": "ord-1795541809168",
+      "orderNumber": "LV-36155",
+      "date": "2026-11-24",
+      "items": [
+        {
+          "productId": "lov-new-106",
+          "productName": "Celeste Freshwater Pearl & Crystal Choker",
+          "variantColor": "Rose Gold & Pearl",
+          "variantSize": "16 inch",
+          "unitPrice": 18500,
+          "quantity": 1,
+          "image": "/assets/necklace.jpg"
+        }
+      ],
+      "shippingAddress": {
+        "fullName": "Kasun Perera",
+        "phone": "+94 77 123 4567",
+        "street": "45/2 Cinnamon Gardens",
+        "city": "Colombo 07",
+        "postalCode": "00700",
+        "country": "Sri Lanka"
+      },
+      "paymentMethod": "card",
+      "totalAmountLKR": 18500,
+      "status": "Processing",
+      "trackingNumber": "TRK-SL-301392"
+    },
+    {
       "id": "ord-101",
       "orderNumber": "LV-90821",
       "date": "2026-07-25",

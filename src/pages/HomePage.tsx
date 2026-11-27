@@ -1,10 +1,11 @@
-import React from 'react';
-import { Product, CategorySlug } from '../types';
-import { Sparkles, ArrowRight, ShieldCheck, Award, Heart, ShoppingBag, Star, RefreshCw } from 'lucide-react';
+import React, { useState } from 'react';
+import { Product, CategorySlug, HeroBannerConfig, DEFAULT_HERO_CONFIG } from '../types';
+import { Sparkles, ArrowRight, ShieldCheck, Award, Heart, ShoppingBag, Star, RefreshCw, ChevronLeft, ChevronRight, Volume2, VolumeX } from 'lucide-react';
 import { ProductCard } from '../components/product/ProductCard';
 
 interface HomePageProps {
   products: Product[];
+  heroConfig?: HeroBannerConfig;
   onSelectCategory: (category: CategorySlug) => void;
   onNavigate: (page: 'home' | 'shop' | 'checkout' | 'account' | 'admin') => void;
   onQuickView: (product: Product) => void;
@@ -13,6 +14,7 @@ interface HomePageProps {
 
 export const HomePage: React.FC<HomePageProps> = ({
   products,
+  heroConfig = DEFAULT_HERO_CONFIG,
   onSelectCategory,
   onNavigate,
   onQuickView,
@@ -21,62 +23,265 @@ export const HomePage: React.FC<HomePageProps> = ({
   const featuredProducts = products.filter((p) => p.isFeatured).slice(0, 4);
   const bestSellers = products.filter((p) => p.isBestSeller).slice(0, 4);
 
+  const hero = heroConfig || DEFAULT_HERO_CONFIG;
+
+  const videoPlaylist = (hero.videoUrls && hero.videoUrls.length > 0)
+    ? hero.videoUrls
+    : (hero.videoUrl ? [hero.videoUrl] : ['/assets/videos/hero-jewelry.mp4']);
+
+  const [currentVideoIdx, setCurrentVideoIdx] = useState(0);
+  const activeVideoUrl = videoPlaylist[currentVideoIdx] || videoPlaylist[0];
+  const [isMuted, setIsMuted] = useState(true);
+
+  const videoRef = React.useRef<HTMLVideoElement | null>(null);
+
+  // Force DOM property muted and trigger playback reliably across all browsers
+  React.useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.muted = isMuted;
+      videoRef.current.defaultMuted = true;
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((err) => {
+          console.warn('Autoplay prevented by browser, retrying muted:', err);
+          if (videoRef.current) {
+            videoRef.current.muted = true;
+            videoRef.current.play().catch(() => {});
+          }
+        });
+      }
+    }
+  }, [activeVideoUrl, isMuted]);
+
+  // Auto transition when current video ends
+  const handleVideoEnded = () => {
+    if (videoPlaylist.length > 1) {
+      setCurrentVideoIdx((prev) => (prev + 1) % videoPlaylist.length);
+    }
+  };
+
+  const handlePrevVideo = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentVideoIdx((prev) => (prev - 1 + videoPlaylist.length) % videoPlaylist.length);
+  };
+
+  const handleNextVideo = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentVideoIdx((prev) => (prev + 1) % videoPlaylist.length);
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '4rem' }}>
-      {/* Hero Banner Section */}
+      {/* Hero Banner Section (Video / Image Luxury Showcase) */}
       <section
         className="hero-banner-box"
         style={{
           position: 'relative',
-          minHeight: '520px',
-          backgroundImage: 'linear-gradient(90deg, rgba(18,18,18,0.85) 0%, rgba(18,18,18,0.4) 100%), url("https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1600&q=80")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          minHeight: '560px',
+          overflow: 'hidden',
           display: 'flex',
           alignItems: 'center',
-          borderRadius: '12px',
+          borderRadius: '16px',
           margin: '1.5rem 1.5rem 0',
-          padding: '4rem 3rem',
-          color: '#FFFFFF'
+          padding: '4.5rem 3.5rem',
+          color: '#FFFFFF',
+          backgroundColor: '#121212'
         }}
       >
-        <div style={{ maxWidth: '600px' }}>
-          <span style={{ backgroundColor: 'rgba(212, 175, 55, 0.2)', color: '#D4AF37', border: '1px solid #D4AF37', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.15em', padding: '6px 14px', borderRadius: '20px', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '6px', marginBottom: '1.25rem' }}>
-            <Sparkles size={14} /> 2026 Royal Heritage Collection
+        {/* Background Ambient Video Layer */}
+        {hero.mediaType === 'video' && activeVideoUrl ? (
+          <video
+            ref={videoRef}
+            key={activeVideoUrl}
+            src={activeVideoUrl}
+            autoPlay
+            loop={videoPlaylist.length === 1}
+            muted={isMuted}
+            playsInline
+            onEnded={handleVideoEnded}
+            onError={(e) => {
+              console.warn('Video failed to stream, trying next in playlist:', activeVideoUrl, e);
+              if (videoPlaylist.length > 1) {
+                setCurrentVideoIdx((prev) => (prev + 1) % videoPlaylist.length);
+              }
+            }}
+            poster={hero.imageUrl}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              zIndex: 0
+            }}
+          />
+        ) : (
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              backgroundImage: `url("${hero.imageUrl}")`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              zIndex: 0
+            }}
+          />
+        )}
+
+        {/* Luxury Gold-Black Ambient Gradient Overlay */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(90deg, rgba(18,18,18,0.92) 0%, rgba(18,18,18,0.65) 55%, rgba(18,18,18,0.35) 100%)',
+            zIndex: 1
+          }}
+        />
+
+        {/* Foreground Content Container */}
+        <div style={{ position: 'relative', zIndex: 2, maxWidth: '640px' }}>
+          <span style={{ backgroundColor: 'rgba(212, 175, 55, 0.25)', color: '#D4AF37', border: '1px solid #D4AF37', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.15em', padding: '6px 14px', borderRadius: '20px', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '6px', marginBottom: '1.25rem', backdropFilter: 'blur(4px)' }}>
+            <Sparkles size={14} /> {hero.badgeText}
           </span>
 
-          <h1 className="hero-banner-title" style={{ fontFamily: "'Cinzel', serif", fontSize: '3rem', fontWeight: 700, lineHeight: 1.15, marginBottom: '1.25rem' }}>
-            Timeless Luxury, Crafted for Perfection.
+          <h1 className="hero-banner-title" style={{ fontFamily: "'Cinzel', serif", fontSize: '3.2rem', fontWeight: 700, lineHeight: 1.15, marginBottom: '1.25rem', textShadow: '0 4px 20px rgba(0,0,0,0.6)' }}>
+            {hero.title}
           </h1>
 
-          <p style={{ fontSize: '1rem', color: '#E0E0E0', lineHeight: 1.6, marginBottom: '2rem' }}>
-            Explore high-end 18K gold-plated jewellery, genuine freshwater pearls, and brilliant Austrian crystal creations designed to elevate everyday style into royalty.
+          <p style={{ fontSize: '1.05rem', color: '#E0E0E0', lineHeight: 1.65, marginBottom: '2.25rem', textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
+            {hero.subtitle}
           </p>
 
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
             <button
               onClick={() => {
-                onSelectCategory('all');
+                onSelectCategory(hero.button1Category || 'all');
                 onNavigate('shop');
               }}
               className="btn-gold"
+              style={{ padding: '0.9rem 1.8rem', fontSize: '0.9rem', boxShadow: '0 8px 25px rgba(212, 175, 55, 0.4)' }}
             >
-              <span>Explore Collection</span>
+              <span>{hero.button1Text || 'Explore Collection'}</span>
               <ArrowRight size={18} />
             </button>
 
             <button
               onClick={() => {
-                onSelectCategory('necklaces');
+                onSelectCategory(hero.button2Category || 'necklaces');
                 onNavigate('shop');
               }}
               className="btn-outline"
-              style={{ borderColor: '#FFFFFF', color: '#FFFFFF' }}
+              style={{ borderColor: '#FFFFFF', color: '#FFFFFF', padding: '0.9rem 1.8rem', fontSize: '0.9rem', backdropFilter: 'blur(4px)', backgroundColor: 'rgba(255,255,255,0.05)' }}
             >
-              18K Necklaces
+              {hero.button2Text || '18K Necklaces'}
             </button>
           </div>
         </div>
+
+        {/* Multi-Video Luxury Playlist Carousel Controls */}
+        {hero.mediaType === 'video' && videoPlaylist.length > 1 && (
+          <div
+            style={{
+              position: 'absolute',
+              bottom: '1.75rem',
+              right: '2.5rem',
+              zIndex: 3,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              backgroundColor: 'rgba(18, 18, 18, 0.78)',
+              backdropFilter: 'blur(12px)',
+              padding: '0.45rem 1.15rem',
+              borderRadius: '30px',
+              border: '1px solid rgba(212, 175, 55, 0.45)',
+              boxShadow: '0 8px 30px rgba(0,0,0,0.6)'
+            }}
+          >
+            <button
+              onClick={handlePrevVideo}
+              title="Previous Showcase Video"
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#D4AF37',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                padding: '3px',
+                borderRadius: '50%',
+                transition: 'transform 0.2s'
+              }}
+            >
+              <ChevronLeft size={18} />
+            </button>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              {videoPlaylist.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentVideoIdx(idx);
+                  }}
+                  title={`Switch to Showcase Video ${idx + 1}`}
+                  style={{
+                    width: currentVideoIdx === idx ? '22px' : '8px',
+                    height: '8px',
+                    borderRadius: '4px',
+                    backgroundColor: currentVideoIdx === idx ? '#D4AF37' : 'rgba(255, 255, 255, 0.35)',
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    padding: 0
+                  }}
+                />
+              ))}
+            </div>
+
+            <span style={{ fontSize: '0.75rem', color: '#FAF7F2', fontWeight: 600, letterSpacing: '0.05em' }}>
+              0{currentVideoIdx + 1} / 0{videoPlaylist.length}
+            </span>
+
+            <button
+              onClick={handleNextVideo}
+              title="Next Showcase Video"
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#D4AF37',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                padding: '3px',
+                borderRadius: '50%',
+                transition: 'transform 0.2s'
+              }}
+            >
+              <ChevronRight size={18} />
+            </button>
+
+            {/* Audio Mute / Unmute Toggle */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsMuted(!isMuted);
+              }}
+              title={isMuted ? 'Unmute Video Audio' : 'Mute Video Audio'}
+              style={{
+                background: 'none',
+                border: 'none',
+                borderLeft: '1px solid rgba(255,255,255,0.2)',
+                paddingLeft: '0.65rem',
+                color: '#FAF7F2',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
+              {isMuted ? <VolumeX size={15} color="#aaa" /> : <Volume2 size={15} color="#D4AF37" />}
+            </button>
+          </div>
+        )}
       </section>
 
       {/* Featured Categories Grid */}

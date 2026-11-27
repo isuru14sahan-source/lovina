@@ -102,3 +102,36 @@ export interface FilterState {
   searchQuery: string;
   sortBy: 'featured' | 'price-low' | 'price-high' | 'rating' | 'newest';
 }
+
+export interface HeroBannerConfig {
+  mediaType: 'video' | 'image';
+  videoUrl: string;
+  videoUrls?: string[];
+  imageUrl: string;
+  badgeText: string;
+  title: string;
+  subtitle: string;
+  button1Text: string;
+  button1Category: CategorySlug;
+  button2Text: string;
+  button2Category: CategorySlug;
+}
+
+export const DEFAULT_HERO_CONFIG: HeroBannerConfig = {
+  mediaType: 'video',
+  videoUrl: 'https://aohibqmnckdcdwpcabkz.supabase.co/storage/v1/object/public/product-images/videos/hero-video-1795762311624-eqw0w.mp4',
+  videoUrls: [
+    'https://aohibqmnckdcdwpcabkz.supabase.co/storage/v1/object/public/product-images/videos/hero-video-1795762311624-eqw0w.mp4',
+    'https://aohibqmnckdcdwpcabkz.supabase.co/storage/v1/object/public/product-images/videos/hero-video-1795762313606-ruw3k.mp4',
+    'https://aohibqmnckdcdwpcabkz.supabase.co/storage/v1/object/public/product-images/videos/hero-video-1795760818619.mp4',
+    '/assets/videos/hero-jewelry.mp4'
+  ],
+  imageUrl: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1600&q=80',
+  badgeText: '2026 ROYAL HERITAGE COLLECTION',
+  title: 'Timeless Luxury, Crafted for Perfection.',
+  subtitle: 'Explore high-end 18K gold-plated jewellery, genuine freshwater pearls, and brilliant Austrian crystal creations designed to elevate everyday style into royalty.',
+  button1Text: 'Explore Collection',
+  button1Category: 'all',
+  button2Text: '18K Necklaces',
+  button2Category: 'necklaces'
+};

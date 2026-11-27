@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { INITIAL_ORDERS } from '../services/mockData';
+import { Order } from '../types';
 import { Package, User as UserIcon, MapPin, Heart, Clock, Truck, CheckCircle2 } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
+import { supabaseService } from '../services/supabaseService';
 
 interface AccountPageProps {
   onNavigateShop: () => void;
@@ -11,6 +13,39 @@ interface AccountPageProps {
 export const AccountPage: React.FC<AccountPageProps> = ({ onNavigateShop }) => {
   const { user, loginAsCustomer } = useAuth();
   const { wishlist } = useWishlist();
+
+  const [customerOrders, setCustomerOrders] = useState<Order[]>(() => {
+    try {
+      const local = JSON.parse(localStorage.getItem('lovina_customer_orders') || '[]');
+      return local.length > 0 ? local : INITIAL_ORDERS;
+    } catch {
+      return INITIAL_ORDERS;
+    }
+  });
+
+  useEffect(() => {
+    const fetchUserOrders = async () => {
+      if (supabaseService.isReady()) {
+        try {
+          const cloudOrders = await supabaseService.getOrders();
+          if (cloudOrders && cloudOrders.length > 0) {
+            // Include recent local cache + cloud orders
+            const local = JSON.parse(localStorage.getItem('lovina_customer_orders') || '[]');
+            const merged = [...local];
+            cloudOrders.forEach((co) => {
+              if (!merged.some((m) => m.orderNumber === co.orderNumber)) {
+                merged.push(co);
+              }
+            });
+            setCustomerOrders(merged);
+          }
+        } catch (err) {
+          console.warn('Could not load user orders from Supabase:', err);
+        }
+      }
+    };
+    fetchUserOrders();
+  }, []);
 
   if (!user) {
     return (
@@ -58,7 +93,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({ onNavigateShop }) => {
         </h2>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          {INITIAL_ORDERS.map((order) => (
+          {customerOrders.map((order) => (
             <div key={order.id} style={{ border: '1px solid #E8E3D9', borderRadius: '8px', overflow: 'hidden' }}>
               <div style={{ backgroundColor: '#FAF7F2', padding: '1rem 1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid #E8E3D9' }}>
                 <div>

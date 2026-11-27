@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { X, Save, PlusCircle, Trash2, Image as ImageIcon, Upload } from 'lucide-react';
 import { Product, CategorySlug, MetalType, GemstoneType, ProductVariant } from '../../types';
 import { useToast } from '../../context/ToastContext';
-
 import { googleDriveService } from '../../services/googleDrive';
+import { supabaseService } from '../../services/supabaseService';
 
 interface EditProductModalProps {
   isOpen: boolean;
@@ -58,7 +58,7 @@ export const EditProductModal: React.FC<EditProductModalProps> = ({
 
   const [isUploading, setIsUploading] = useState(false);
 
-  // Handle direct file upload to isuru14sahan@gmail.com Google Drive folder
+  // Handle direct file upload to Supabase Storage (with fallback to local preview)
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, targetField: 'main' | 'g1' | 'g2' | 'g3') => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -70,17 +70,33 @@ export const EditProductModal: React.FC<EditProductModalProps> = ({
 
     setIsUploading(true);
 
-    const result = await googleDriveService.uploadPhotoToDrive(file);
-
-    if (result.success) {
-      if (targetField === 'main') setMainHeroImage(result.driveUrl);
-      if (targetField === 'g1') setGalleryImage1(result.driveUrl);
-      if (targetField === 'g2') setGalleryImage2(result.driveUrl);
-      if (targetField === 'g3') setGalleryImage3(result.driveUrl);
-      showToast(`Uploaded ${result.fileName} to Google Drive folder [Lovina Product Photos]!`, 'success');
+    try {
+      if (supabaseService.isReady()) {
+        const publicUrl = await supabaseService.uploadImage(file);
+        if (publicUrl) {
+          if (targetField === 'main') setMainHeroImage(publicUrl);
+          if (targetField === 'g1') setGalleryImage1(publicUrl);
+          if (targetField === 'g2') setGalleryImage2(publicUrl);
+          if (targetField === 'g3') setGalleryImage3(publicUrl);
+          showToast(`Photo updated to Supabase Storage successfully!`, 'success');
+        }
+      } else {
+        const reader = new FileReader();
+        reader.onload = (uploadEvent) => {
+          const base64 = uploadEvent.target?.result as string;
+          if (targetField === 'main') setMainHeroImage(base64);
+          if (targetField === 'g1') setGalleryImage1(base64);
+          if (targetField === 'g2') setGalleryImage2(base64);
+          if (targetField === 'g3') setGalleryImage3(base64);
+          showToast('Image loaded! (Add Supabase keys to .env for cloud CDN storage)', 'info');
+        };
+        reader.readAsDataURL(file);
+      }
+    } catch (err: any) {
+      showToast(`Upload failed: ${err.message || 'Please check Supabase settings'}`, 'error');
+    } finally {
+      setIsUploading(false);
     }
-
-    setIsUploading(false);
   };
 
   const handleAddVariant = () => {

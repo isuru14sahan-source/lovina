@@ -127,18 +127,29 @@ export const ProductIndexTable: React.FC<ProductIndexTableProps> = ({
         </div>
       </div>
 
-      {/* Index Table */}
-      <div style={{ overflowX: 'auto', borderRadius: '8px', border: '1px solid #121212' }}>
+      {/* Index Table with Internal Scroll & Sticky Header */}
+      <div
+        className="admin-scrollable-table"
+        style={{
+          maxHeight: '600px',
+          overflowY: 'auto',
+          overflowX: 'auto',
+          borderRadius: '8px',
+          border: '1px solid #121212',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+          position: 'relative'
+        }}
+      >
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
-          <thead>
+          <thead style={{ position: 'sticky', top: 0, zIndex: 10 }}>
             <tr style={{ backgroundColor: '#121212', color: '#D4AF37', textAlign: 'left', fontFamily: "'Cinzel', serif", letterSpacing: '0.05em' }}>
-              <th style={{ padding: '1rem 1.25rem', width: '32%' }}>Product & Image</th>
-              <th style={{ padding: '1rem 1rem', width: '12%' }}>SKU Code</th>
-              <th style={{ padding: '1rem 1rem', width: '14%' }}>Category</th>
-              <th style={{ padding: '1rem 1rem', width: '14%' }}>Price (LKR)</th>
-              <th style={{ padding: '1rem 1rem', width: '10%' }}>Stock</th>
-              <th style={{ padding: '1rem 1rem', width: '10%' }}>Status</th>
-              <th style={{ padding: '1rem 1.25rem', width: '8%', textAlign: 'right' }}>Actions</th>
+              <th style={{ padding: '1rem 1.25rem', width: '32%', position: 'sticky', top: 0, backgroundColor: '#121212', zIndex: 10, boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>Product & Image</th>
+              <th style={{ padding: '1rem 1rem', width: '12%', position: 'sticky', top: 0, backgroundColor: '#121212', zIndex: 10, boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>SKU Code</th>
+              <th style={{ padding: '1rem 1rem', width: '14%', position: 'sticky', top: 0, backgroundColor: '#121212', zIndex: 10, boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>Category</th>
+              <th style={{ padding: '1rem 1rem', width: '14%', position: 'sticky', top: 0, backgroundColor: '#121212', zIndex: 10, boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>Price (LKR)</th>
+              <th style={{ padding: '1rem 1rem', width: '10%', position: 'sticky', top: 0, backgroundColor: '#121212', zIndex: 10, boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>Stock</th>
+              <th style={{ padding: '1rem 1rem', width: '10%', position: 'sticky', top: 0, backgroundColor: '#121212', zIndex: 10, boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>Status</th>
+              <th style={{ padding: '1rem 1.25rem', width: '8%', textAlign: 'right', position: 'sticky', top: 0, backgroundColor: '#121212', zIndex: 10, boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>Actions</th>
             </tr>
           </thead>
           <tbody>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Package, Search, Truck, CheckCircle2, Clock, MapPin, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { Package, Search, Truck, CheckCircle2, Clock, MapPin, ArrowLeft, ShieldCheck, Loader2 } from 'lucide-react';
 import { INITIAL_ORDERS } from '../services/mockData';
+import { supabaseService } from '../services/supabaseService';
 
 interface OrderTrackingPageProps {
   onBackToShop: () => void;
@@ -10,15 +11,49 @@ export const OrderTrackingPage: React.FC<OrderTrackingPageProps> = ({ onBackToSh
   const [searchCode, setSearchCode] = useState('');
   const [matchedOrder, setMatchedOrder] = useState<any | null>(INITIAL_ORDERS[0]);
   const [searched, setSearched] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSearched(true);
     const q = searchCode.trim().toLowerCase();
+    if (!q) return;
+
+    setIsSearching(true);
+    setSearched(true);
+
+    // 1. Check Supabase Cloud first
+    if (supabaseService.isReady()) {
+      try {
+        const cloudOrder = await supabaseService.trackOrder(q);
+        if (cloudOrder) {
+          setMatchedOrder(cloudOrder);
+          setIsSearching(false);
+          return;
+        }
+      } catch (err) {
+        console.warn('Supabase tracking error:', err);
+      }
+    }
+
+    // 2. Check localStorage (recent orders)
+    try {
+      const cached = JSON.parse(localStorage.getItem('lovina_customer_orders') || '[]');
+      const localFound = cached.find(
+        (o: any) => o.orderNumber?.toLowerCase() === q || (o.trackingNumber && o.trackingNumber.toLowerCase() === q)
+      );
+      if (localFound) {
+        setMatchedOrder(localFound);
+        setIsSearching(false);
+        return;
+      }
+    } catch {}
+
+    // 3. Fallback to initial demo orders
     const found = INITIAL_ORDERS.find(
       (o) => o.orderNumber.toLowerCase() === q || (o.trackingNumber && o.trackingNumber.toLowerCase() === q)
     );
     setMatchedOrder(found || null);
+    setIsSearching(false);
   };
 
   const getStepActive = (status: string, stepIndex: number) => {
