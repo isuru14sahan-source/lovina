@@ -1,7 +1,7 @@
-// Google Drive Cloud Photo Upload & Link Conversion Service for isuru14sahan@gmail.com
+// Google Drive Cloud Photo Upload & Link Conversion Service
 
 export const GOOGLE_DRIVE_CONFIG = {
-  adminEmail: 'isuru14sahan@gmail.com',
+  adminEmail: (import.meta.env.VITE_ADMIN_EMAIL as string) || 'admin@lovina.lk',
   targetFolder: 'Lovina Product Photos'
 };
 
@@ -30,7 +30,7 @@ export const googleDriveService = {
     return trimmed;
   },
 
-  // Process and upload file to isuru14sahan@gmail.com Google Drive storage pipeline
+  // Process and upload file to cloud storage pipeline
   async uploadPhotoToDrive(
     file: File,
     onProgress?: (progress: number) => void
@@ -46,7 +46,6 @@ export const googleDriveService = {
 
         setTimeout(() => {
           if (onProgress) onProgress(100);
-          console.log(`Uploaded ${file.name} to isuru14sahan@gmail.com Google Drive folder [Lovina Product Photos]`);
           resolve({
             success: true,
             driveUrl: dataUrl,

@@ -82,11 +82,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [newProdImage, setNewProdImage] = useState('/assets/necklace.jpg');
   const [newProdStock, setNewProdStock] = useState('15');
 
-  const handleAdminLoginSubmit = (e: React.FormEvent) => {
+  const handleAdminLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const success = loginAsAdminWithCredentials(inputEmail, inputPassword);
+      const success = await loginAsAdminWithCredentials(inputEmail, inputPassword);
       if (success) {
         setInputPassword('');
       }

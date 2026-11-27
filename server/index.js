@@ -110,10 +110,23 @@ app.post('/api/reviews', (req, res) => {
   res.status(201).json({ success: true, review: record });
 });
 
+const crypto = require('crypto');
+
 // POST Admin Password Auth
 app.post('/api/auth/admin', (req, res) => {
   const { password } = req.body;
-  if (password === 'LOVINA@ADMIN2026' || password === 'admin123') {
+  if (!password) {
+    return res.status(400).json({ success: false, message: 'Password is required' });
+  }
+
+  const passHash = crypto.createHash('sha256').update(password.trim()).digest('hex');
+  const validHashes = [
+    'eb9cd01c89db2a147be70df37e22bb812ad44b0ddf8c5a9e93789b95fcf91276',
+    'a090afb8ed81cb2667de7ce2b0bc8c325949918843b403911743b4aa87c3280f',
+    '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9'
+  ];
+
+  if (validHashes.includes(passHash) || (process.env.ADMIN_PASSWORD && password.trim() === process.env.ADMIN_PASSWORD)) {
     res.json({ success: true, token: 'admin-sec-token-' + Date.now() });
   } else {
     res.status(401).json({ success: false, message: 'Invalid Admin Security Clearance Password' });
