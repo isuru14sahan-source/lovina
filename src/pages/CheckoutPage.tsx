@@ -99,7 +99,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onBackToShop, onOrde
   if (orderConfirmed) {
     const finalOrder = placedOrder;
     const finalTotal = finalOrder ? finalOrder.totalAmountLKR : 0;
-    const finalPayment = finalOrder?.paymentMethod === 'card' ? 'Online Bank Transfer / Card' : 'Cash on Delivery (COD)';
+    const finalPayment = finalOrder?.paymentMethod === 'card' ? 'Online Bank Transfer' : 'Cash on Delivery (COD)';
     const finalItems = finalOrder?.items || [];
 
     const itemsSummaryText = finalItems.length > 0
@@ -339,7 +339,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onBackToShop, onOrde
                   style={{ accentColor: '#D4AF37' }}
                 />
                 <div style={{ flex: 1 }}>
-                  <span style={{ fontWeight: 700, fontSize: '0.9rem', display: 'block' }}>Online Bank Transfer / Card</span>
+                  <span style={{ fontWeight: 700, fontSize: '0.9rem', display: 'block' }}>Online Bank Transfer</span>
                   <span style={{ fontSize: '0.75rem', color: '#6E6E6E' }}>Transfer via Bank deposit or confirm slip via WhatsApp (071 287 5731)</span>
                 </div>
                 <Lock size={18} color="#AA820A" />

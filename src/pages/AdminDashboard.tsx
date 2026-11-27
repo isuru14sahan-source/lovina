@@ -593,7 +593,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <tr key={o.id} style={{ borderBottom: '1px solid #F0ECE1' }}>
                       <td style={{ padding: '0.85rem 1rem', fontWeight: 700 }}>
                         <span style={{ color: '#121212' }}>#{o.orderNumber}</span>
-                        <span style={{ display: 'block', fontSize: '0.7rem', color: '#888', textTransform: 'uppercase' }}>{o.paymentMethod}</span>
+                        <span style={{ display: 'block', fontSize: '0.7rem', color: '#888', textTransform: 'uppercase' }}>{o.paymentMethod === 'card' ? 'Bank Transfer' : 'COD'}</span>
                       </td>
                       <td style={{ padding: '0.85rem 1rem', color: '#555', fontSize: '0.8rem' }}>{o.date}</td>
                       <td style={{ padding: '0.85rem 1rem' }}>

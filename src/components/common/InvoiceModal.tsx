@@ -103,7 +103,7 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({ isOpen, onClose, ord
             </div>
             <div style={{ textAlign: 'right' }}>
               <h4 style={{ fontSize: '0.8rem', textTransform: 'uppercase', color: '#888', marginBottom: '0.3rem' }}>Payment & Courier Info:</h4>
-              <p style={{ margin: '0 0 0.2rem 0', color: '#121212' }}><strong>Method:</strong> {order.paymentMethod === 'card' ? 'Visa / Mastercard Online' : 'Cash on Delivery (COD)'}</p>
+              <p style={{ margin: '0 0 0.2rem 0', color: '#121212' }}><strong>Method:</strong> {order.paymentMethod === 'card' ? 'Online Bank Transfer' : 'Cash on Delivery (COD)'}</p>
               <p style={{ margin: 0, color: '#121212' }}><strong>Tracking ID:</strong> {order.trackingNumber || 'Pending'}</p>
             </div>
           </div>
