@@ -181,6 +181,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         {/* Multi-Video Luxury Playlist Carousel Controls */}
         {hero.mediaType === 'video' && videoPlaylist.length > 1 && (
           <div
+            className="hero-video-controls"
             style={{
               position: 'absolute',
               bottom: '1.75rem',

@@ -111,9 +111,10 @@ export const Header: React.FC<HeaderProps> = ({
             <Search size={22} />
           </button>
 
-          {/* Admin Clearance Portal Button */}
+          {/* Admin Clearance Portal Button (Desktop only in header, moved to drawer on mobile) */}
           <button
             onClick={() => onNavigate('admin')}
+            className="desktop-only-admin-btn"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
