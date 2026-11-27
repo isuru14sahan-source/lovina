@@ -26,25 +26,34 @@ import { OrderTrackingPage } from './pages/OrderTrackingPage';
 
 export const AppContent: React.FC = () => {
   const [products, setProducts] = useState<Product[]>(() => {
-    const saved = localStorage.getItem('lovina_products_v4');
+    const saved = localStorage.getItem('lovina_products_v5');
     return saved ? JSON.parse(saved) : INITIAL_PRODUCTS;
   });
 
   useEffect(() => {
-    localStorage.setItem('lovina_products_v4', JSON.stringify(products));
+    localStorage.setItem('lovina_products_v5', JSON.stringify(products));
   }, [products]);
 
-  // Load products from Supabase if configured
+  // Load products from Supabase if configured & auto-sync missing catalog items
   useEffect(() => {
     const syncSupabase = async () => {
       if (supabaseService.isReady()) {
         try {
           const remoteProducts = await supabaseService.getProducts();
           if (remoteProducts && remoteProducts.length > 0) {
-            setProducts(remoteProducts);
+            // Auto-detect any new items in INITIAL_PRODUCTS and seed them to Supabase
+            const remoteIds = new Set(remoteProducts.map((p) => p.id));
+            const missing = INITIAL_PRODUCTS.filter((p) => !remoteIds.has(p.id));
+            if (missing.length > 0) {
+              await supabaseService.seedProducts(missing);
+              setProducts([...remoteProducts, ...missing]);
+            } else {
+              setProducts(remoteProducts);
+            }
           } else if (remoteProducts && remoteProducts.length === 0) {
             // First time connection: automatically seed catalog to Supabase
             await supabaseService.seedProducts(INITIAL_PRODUCTS);
+            setProducts(INITIAL_PRODUCTS);
           }
         } catch (err) {
           console.warn('Supabase sync skipped, using local cache:', err);
