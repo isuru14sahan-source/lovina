@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Product, Order, CategorySlug, MetalType, GemstoneType, HeroBannerConfig, DEFAULT_HERO_CONFIG } from '../types';
 import { INITIAL_ORDERS } from '../services/mockData';
-import { TrendingUp, Package, AlertTriangle, Plus, Shield, DollarSign, Layers, Lock, Trash2, Edit, Video, Database, Sparkles, Key, Mail, Eye, EyeOff, CheckCircle2, Menu } from 'lucide-react';
+import { TrendingUp, Package, AlertTriangle, Plus, Shield, DollarSign, Layers, Lock, Trash2, Edit, Video, Database, Sparkles, Key, Mail, Eye, EyeOff, CheckCircle2, Menu, FileText } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { AdminSidebar } from '../components/admin/AdminSidebar';
@@ -10,6 +10,7 @@ import { EditProductModal } from '../components/admin/EditProductModal';
 import { AddProductModal } from '../components/admin/AddProductModal';
 import { HeroMediaModal } from '../components/admin/HeroMediaModal';
 import { GoogleAuthModal } from '../components/common/GoogleAuthModal';
+import { InvoiceModal } from '../components/common/InvoiceModal';
 import { supabaseService } from '../services/supabaseService';
 
 interface AdminDashboardProps {
@@ -44,6 +45,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [showAddModal, setShowAddModal] = useState(false);
   const [showHeroModal, setShowHeroModal] = useState(false);
   const [editProduct, setEditProduct] = useState<Product | null>(null);
+  const [selectedInvoiceOrder, setSelectedInvoiceOrder] = useState<Order | null>(null);
 
   // Sync real-time orders from Supabase
   useEffect(() => {
@@ -568,7 +570,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <div
               className="admin-scrollable-table"
               style={{
-                maxHeight: '560px',
+                maxHeight: '620px',
                 overflowY: 'auto',
                 overflowX: 'auto',
                 borderRadius: '8px',
@@ -580,63 +582,190 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <thead style={{ position: 'sticky', top: 0, zIndex: 10 }}>
                   <tr style={{ backgroundColor: '#121212', color: '#D4AF37', textAlign: 'left' }}>
                     <th style={{ padding: '0.85rem 1rem', position: 'sticky', top: 0, backgroundColor: '#121212', zIndex: 10, boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>Order Ref</th>
+                    <th style={{ padding: '0.85rem 1rem', position: 'sticky', top: 0, backgroundColor: '#121212', zIndex: 10, boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>Ordered Item(s) & Photo</th>
+                    <th style={{ padding: '0.85rem 1rem', position: 'sticky', top: 0, backgroundColor: '#121212', zIndex: 10, boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>Customer & Full Delivery Address</th>
                     <th style={{ padding: '0.85rem 1rem', position: 'sticky', top: 0, backgroundColor: '#121212', zIndex: 10, boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>Date</th>
-                    <th style={{ padding: '0.85rem 1rem', position: 'sticky', top: 0, backgroundColor: '#121212', zIndex: 10, boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>Customer & Destination</th>
                     <th style={{ padding: '0.85rem 1rem', position: 'sticky', top: 0, backgroundColor: '#121212', zIndex: 10, boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>Waybill / Courier ID</th>
                     <th style={{ padding: '0.85rem 1rem', position: 'sticky', top: 0, backgroundColor: '#121212', zIndex: 10, boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>Total</th>
                     <th style={{ padding: '0.85rem 1rem', position: 'sticky', top: 0, backgroundColor: '#121212', zIndex: 10, boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>Status</th>
-                    <th style={{ padding: '0.85rem 1rem', position: 'sticky', top: 0, backgroundColor: '#121212', zIndex: 10, boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>Update Status</th>
+                    <th style={{ padding: '0.85rem 1rem', position: 'sticky', top: 0, backgroundColor: '#121212', zIndex: 10, boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {orders.map((o) => (
-                    <tr key={o.id} style={{ borderBottom: '1px solid #F0ECE1' }}>
-                      <td style={{ padding: '0.85rem 1rem', fontWeight: 700 }}>
-                        <span style={{ color: '#121212' }}>#{o.orderNumber}</span>
-                        <span style={{ display: 'block', fontSize: '0.7rem', color: '#888', textTransform: 'uppercase' }}>{o.paymentMethod === 'card' ? 'Bank Transfer' : 'COD'}</span>
-                      </td>
-                      <td style={{ padding: '0.85rem 1rem', color: '#555', fontSize: '0.8rem' }}>{o.date}</td>
-                      <td style={{ padding: '0.85rem 1rem' }}>
-                        <strong>{o.shippingAddress.fullName}</strong>
-                        <span style={{ display: 'block', fontSize: '0.75rem', color: '#6E6E6E' }}>{o.shippingAddress.city} • {o.shippingAddress.phone}</span>
-                      </td>
-                      <td style={{ padding: '0.85rem 1rem' }}>
-                        <code style={{ fontSize: '0.75rem', backgroundColor: '#FAF7F2', padding: '2px 6px', borderRadius: '4px', border: '1px solid #E8E3D9', color: '#AA820A' }}>
-                          {o.trackingNumber || 'Pending Waybill'}
-                        </code>
-                      </td>
-                      <td style={{ padding: '0.85rem 1rem', fontWeight: 700, color: '#AA820A' }}>
-                        LKR {o.totalAmountLKR.toLocaleString()}
-                      </td>
-                      <td style={{ padding: '0.85rem 1rem' }}>
-                        <span style={{
-                          backgroundColor: o.status === 'Delivered' ? '#E8F5E9' : o.status === 'Shipped' ? '#E3F2FD' : '#FAF7F2',
-                          color: o.status === 'Delivered' ? '#2B7A4B' : o.status === 'Shipped' ? '#1565C0' : '#AA820A',
-                          padding: '4px 10px',
-                          borderRadius: '12px',
-                          border: '1px solid #D4AF37',
-                          fontWeight: 700,
-                          fontSize: '0.75rem',
-                          textTransform: 'uppercase'
-                        }}>
-                          {o.status}
-                        </span>
-                      </td>
-                      <td style={{ padding: '0.85rem 1rem' }}>
-                        <select
-                          value={o.status}
-                          onChange={(e) => handleUpdateOrderStatus(o.id, e.target.value as Order['status'])}
-                          style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', borderRadius: '4px', border: '1px solid #D5CEC2', backgroundColor: '#FFFFFF', cursor: 'pointer' }}
-                        >
-                          <option value="Pending">Set Pending</option>
-                          <option value="Processing">Set Processing</option>
-                          <option value="Shipped">Set Shipped</option>
-                          <option value="Delivered">Set Delivered</option>
-                          <option value="Cancelled">Set Cancelled</option>
-                        </select>
-                      </td>
-                    </tr>
-                  ))}
+                  {orders.map((o) => {
+                    const cleanPhone = (o.shippingAddress.phone || '').replace(/[^0-9]/g, '');
+                    const waNum = cleanPhone.startsWith('0') ? '94' + cleanPhone.slice(1) : cleanPhone;
+                    const waUrl = waNum ? `https://wa.me/${waNum}?text=${encodeURIComponent(`Hi ${o.shippingAddress.fullName}! This is Lovina Luxury Jewellery regarding your order #${o.orderNumber}.`)}` : '#';
+
+                    return (
+                      <tr key={o.id} style={{ borderBottom: '1px solid #F0ECE1' }}>
+                        {/* Order Ref & Payment */}
+                        <td style={{ padding: '0.85rem 1rem', fontWeight: 700, verticalAlign: 'top' }}>
+                          <span style={{ color: '#121212', fontSize: '0.92rem' }}>#{o.orderNumber}</span>
+                          <span
+                            style={{
+                              display: 'inline-block',
+                              fontSize: '0.68rem',
+                              padding: '2px 6px',
+                              borderRadius: '4px',
+                              marginTop: '4px',
+                              fontWeight: 700,
+                              textTransform: 'uppercase',
+                              backgroundColor: o.paymentMethod === 'card' ? '#FFF8E1' : '#E8F5E9',
+                              color: o.paymentMethod === 'card' ? '#AA820A' : '#2B7A4B',
+                              border: `1px solid ${o.paymentMethod === 'card' ? '#FFE082' : '#C8E6C9'}`
+                            }}
+                          >
+                            {o.paymentMethod === 'card' ? 'Bank Transfer' : 'COD'}
+                          </span>
+                        </td>
+
+                        {/* Ordered Items & Photo */}
+                        <td style={{ padding: '0.85rem 1rem', verticalAlign: 'top', minWidth: '220px' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                            {o.items && o.items.length > 0 ? (
+                              o.items.map((it, idx) => (
+                                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                                  <div style={{ width: '48px', height: '48px', borderRadius: '6px', border: '1px solid #D4AF37', overflow: 'hidden', flexShrink: 0, backgroundColor: '#FAF7F2' }}>
+                                    <img
+                                      src={it.image || '/assets/necklace.jpg'}
+                                      alt={it.productName}
+                                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                      onError={(e) => {
+                                        (e.target as HTMLImageElement).src = '/assets/necklace.jpg';
+                                      }}
+                                    />
+                                  </div>
+                                  <div style={{ flex: 1, minWidth: 0 }}>
+                                    <span style={{ display: 'block', fontWeight: 600, fontSize: '0.82rem', color: '#121212', lineHeight: 1.25 }} title={it.productName}>
+                                      {it.productName}
+                                    </span>
+                                    <span style={{ display: 'block', fontSize: '0.72rem', color: '#6E6E6E', marginTop: '2px' }}>
+                                      Qty: <strong style={{ color: '#AA820A' }}>{it.quantity}</strong> {it.variantColor ? `• ${it.variantColor}` : ''}
+                                    </span>
+                                  </div>
+                                </div>
+                              ))
+                            ) : (
+                              <span style={{ fontSize: '0.75rem', color: '#888' }}>Lovina Luxury Jewellery Item</span>
+                            )}
+                          </div>
+                        </td>
+
+                        {/* Customer & Full Delivery Address */}
+                        <td style={{ padding: '0.85rem 1rem', verticalAlign: 'top', minWidth: '240px' }}>
+                          <strong style={{ fontSize: '0.88rem', color: '#121212', display: 'block' }}>
+                            {o.shippingAddress.fullName}
+                          </strong>
+
+                          {/* Full Street Address */}
+                          <div style={{ fontSize: '0.8rem', color: '#1a1a1a', fontWeight: 500, marginTop: '3px', lineHeight: 1.35, display: 'flex', alignItems: 'flex-start', gap: '4px' }}>
+                            <span style={{ color: '#AA820A', flexShrink: 0 }}>📍</span>
+                            <span>{o.shippingAddress.street || 'Street address not provided'}</span>
+                          </div>
+
+                          {/* City & Country */}
+                          <div style={{ fontSize: '0.75rem', color: '#6E6E6E', marginTop: '2px', paddingLeft: '16px' }}>
+                            {o.shippingAddress.city}{o.shippingAddress.postalCode ? ` (${o.shippingAddress.postalCode})` : ''} • {o.shippingAddress.country || 'Sri Lanka'}
+                          </div>
+
+                          {/* WhatsApp / Phone link */}
+                          <div style={{ marginTop: '5px' }}>
+                            <a
+                              href={waUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                padding: '2px 8px',
+                                backgroundColor: '#E8F5E9',
+                                color: '#2B7A4B',
+                                borderRadius: '12px',
+                                fontSize: '0.74rem',
+                                fontWeight: 600,
+                                textDecoration: 'none',
+                                border: '1px solid #A5D6A7'
+                              }}
+                              title="Chat with customer on WhatsApp"
+                            >
+                              <span>💬 {o.shippingAddress.phone}</span>
+                            </a>
+                          </div>
+                        </td>
+
+                        {/* Date */}
+                        <td style={{ padding: '0.85rem 1rem', color: '#555', fontSize: '0.8rem', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
+                          {o.date}
+                        </td>
+
+                        {/* Waybill / Courier ID */}
+                        <td style={{ padding: '0.85rem 1rem', verticalAlign: 'top' }}>
+                          <code style={{ fontSize: '0.75rem', backgroundColor: '#FAF7F2', padding: '2px 6px', borderRadius: '4px', border: '1px solid #E8E3D9', color: '#AA820A', display: 'inline-block' }}>
+                            {o.trackingNumber || 'Pending Waybill'}
+                          </code>
+                        </td>
+
+                        {/* Total */}
+                        <td style={{ padding: '0.85rem 1rem', fontWeight: 700, color: '#AA820A', fontSize: '0.9rem', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
+                          LKR {o.totalAmountLKR.toLocaleString()}
+                        </td>
+
+                        {/* Status */}
+                        <td style={{ padding: '0.85rem 1rem', verticalAlign: 'top' }}>
+                          <span style={{
+                            backgroundColor: o.status === 'Delivered' ? '#E8F5E9' : o.status === 'Shipped' ? '#E3F2FD' : '#FAF7F2',
+                            color: o.status === 'Delivered' ? '#2B7A4B' : o.status === 'Shipped' ? '#1565C0' : '#AA820A',
+                            padding: '4px 10px',
+                            borderRadius: '12px',
+                            border: '1px solid #D4AF37',
+                            fontWeight: 700,
+                            fontSize: '0.72rem',
+                            textTransform: 'uppercase',
+                            display: 'inline-block'
+                          }}>
+                            {o.status}
+                          </span>
+                        </td>
+
+                        {/* Actions (Update status + View Invoice) */}
+                        <td style={{ padding: '0.85rem 1rem', verticalAlign: 'top' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+                            <select
+                              value={o.status}
+                              onChange={(e) => handleUpdateOrderStatus(o.id, e.target.value as Order['status'])}
+                              style={{ padding: '0.35rem 0.6rem', fontSize: '0.78rem', borderRadius: '4px', border: '1px solid #D5CEC2', backgroundColor: '#FFFFFF', cursor: 'pointer' }}
+                            >
+                              <option value="Pending">Set Pending</option>
+                              <option value="Processing">Set Processing</option>
+                              <option value="Shipped">Set Shipped</option>
+                              <option value="Delivered">Set Delivered</option>
+                              <option value="Cancelled">Set Cancelled</option>
+                            </select>
+
+                            <button
+                              onClick={() => setSelectedInvoiceOrder(o)}
+                              className="btn-outline"
+                              style={{
+                                padding: '0.35rem 0.6rem',
+                                fontSize: '0.75rem',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '4px',
+                                width: '100%'
+                              }}
+                              title="View & Print Official Customer Invoice"
+                            >
+                              <FileText size={13} />
+                              <span>View Invoice</span>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -673,6 +802,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           if (onSaveHeroConfig) onSaveHeroConfig(cfg);
         }}
       />
+
+      {/* Invoice & Packing Slip Modal */}
+      {selectedInvoiceOrder && (
+        <InvoiceModal
+          isOpen={true}
+          onClose={() => setSelectedInvoiceOrder(null)}
+          order={selectedInvoiceOrder}
+        />
+      )}
     </div>
   );
 };
