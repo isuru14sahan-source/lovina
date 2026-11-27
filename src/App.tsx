@@ -178,7 +178,7 @@ export const AppContent: React.FC = () => {
         />
       )}
 
-      <div style={{ flex: 1 }}>
+      <div style={{ flex: 1, paddingTop: (currentPage === 'home' || currentPage === 'admin') ? 0 : '72px' }}>
         {currentPage === 'home' && (
           <HomePage
             products={activeProducts}

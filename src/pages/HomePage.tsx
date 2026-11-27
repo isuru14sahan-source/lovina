@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Product, CategorySlug, HeroBannerConfig, DEFAULT_HERO_CONFIG } from '../types';
-import { Sparkles, ArrowRight, ShieldCheck, Award, Heart, ShoppingBag, Star, RefreshCw, ChevronLeft, ChevronRight, Volume2, VolumeX } from 'lucide-react';
+import { Sparkles, ArrowRight, ShieldCheck, Award, Heart, ShoppingBag, Star, RefreshCw, ChevronLeft, ChevronRight, Volume2, VolumeX, ChevronDown } from 'lucide-react';
 import { ProductCard } from '../components/product/ProductCard';
 
 interface HomePageProps {
@@ -72,20 +72,22 @@ export const HomePage: React.FC<HomePageProps> = ({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '4rem' }}>
-      {/* Hero Banner Section (Video / Image Luxury Showcase) */}
+      {/* Full-Page Cinematic Hero Showcase (Edge-to-edge 100vh viewport) */}
       <section
         className="hero-banner-box"
         style={{
           position: 'relative',
-          minHeight: '560px',
+          height: '100vh',
+          minHeight: '100vh',
+          width: '100%',
           overflow: 'hidden',
           display: 'flex',
           alignItems: 'center',
-          borderRadius: '16px',
-          margin: '1.5rem 1.5rem 0',
-          padding: '4.5rem 3.5rem',
+          borderRadius: 0,
+          margin: 0,
+          padding: '7rem 3.5rem 4rem',
           color: '#FFFFFF',
-          backgroundColor: '#121212'
+          backgroundColor: '#0A0A0A'
         }}
       >
         {/* Background Ambient Video Layer */}
@@ -283,7 +285,107 @@ export const HomePage: React.FC<HomePageProps> = ({
             </button>
           </div>
         )}
+
+        {/* Futuristic Floating Scroll Indicator */}
+        <div
+          onClick={() => {
+            window.scrollTo({ top: window.innerHeight - 70, behavior: 'smooth' });
+          }}
+          style={{
+            position: 'absolute',
+            bottom: '2rem',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 3,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '0.4rem',
+            cursor: 'pointer',
+            opacity: 0.85,
+            transition: 'opacity 0.2s ease'
+          }}
+          className="scroll-hint-bounce"
+          title="Scroll to Explore Collection"
+        >
+          <span style={{ fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: '0.22em', color: '#D4AF37', fontWeight: 600 }}>
+            Explore
+          </span>
+          <ChevronDown size={18} color="#D4AF37" />
+        </div>
       </section>
+
+      {/* Category Quick Navigation Ribbon (Directly below full-page video) */}
+      <div
+        style={{
+          width: '100%',
+          backgroundColor: '#0F0F0F',
+          borderBottom: '1px solid rgba(212, 175, 55, 0.2)',
+          padding: '1rem 1.5rem',
+          position: 'sticky',
+          top: '72px',
+          zIndex: 90,
+          backdropFilter: 'blur(12px)',
+          background: 'rgba(15, 15, 15, 0.94)'
+        }}
+      >
+        <div
+          style={{
+            maxWidth: '1280px',
+            margin: '0 auto',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.75rem',
+            overflowX: 'auto',
+            paddingBottom: '2px',
+            scrollbarWidth: 'none'
+          }}
+        >
+          {[
+            { slug: 'all' as CategorySlug, label: 'All Jewelry' },
+            { slug: 'necklaces' as CategorySlug, label: '18K Necklaces' },
+            { slug: 'rings' as CategorySlug, label: 'Royal Rings' },
+            { slug: 'earrings' as CategorySlug, label: 'Earrings' },
+            { slug: 'bracelets' as CategorySlug, label: 'Tennis Bracelets' },
+            { slug: 'mens-accessories' as CategorySlug, label: "Men's Luxury" }
+          ].map((cat) => (
+            <button
+              key={cat.slug}
+              onClick={() => {
+                onSelectCategory(cat.slug);
+                onNavigate('shop');
+              }}
+              style={{
+                background: 'rgba(212, 175, 55, 0.08)',
+                border: '1px solid rgba(212, 175, 55, 0.25)',
+                color: '#FAF7F2',
+                padding: '0.45rem 1.15rem',
+                borderRadius: '20px',
+                fontSize: '0.78rem',
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+                fontWeight: 600,
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = '#D4AF37';
+                e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.22)';
+                e.currentTarget.style.color = '#D4AF37';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.25)';
+                e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.08)';
+                e.currentTarget.style.color = '#FAF7F2';
+              }}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {/* Featured Categories Grid */}
       <section style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem', width: '100%' }}>

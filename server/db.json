@@ -1,6 +1,267 @@
 {
   "orders": [
     {
+      "id": "ord-1795795776664",
+      "orderNumber": "LV-82671",
+      "date": "2026-11-27",
+      "items": [
+        {
+          "productId": "lov-brc-11",
+          "productName": "Monaco Emerald Bezel Link Tennis Bracelet",
+          "variantColor": "18K Gold & Emerald",
+          "variantSize": "7 inch",
+          "unitPrice": 16200,
+          "quantity": 1,
+          "image": "/assets/bracelet.jpg"
+        }
+      ],
+      "shippingAddress": {
+        "fullName": "Isuru Sahan",
+        "phone": "4567",
+        "street": "55",
+        "city": "333",
+        "postalCode": "",
+        "country": "Sri Lanka"
+      },
+      "paymentMethod": "card",
+      "totalAmountLKR": 16200,
+      "status": "Processing",
+      "trackingNumber": "TRK-SL-229156"
+    },
+    {
+      "id": "ord-1795794893061",
+      "orderNumber": "LV-14119",
+      "date": "2026-11-27",
+      "items": [
+        {
+          "productId": "lov-brc-11",
+          "productName": "Monaco Emerald Bezel Link Tennis Bracelet",
+          "variantColor": "18K Gold & Emerald",
+          "variantSize": "7 inch",
+          "unitPrice": 16200,
+          "quantity": 1,
+          "image": "/assets/bracelet.jpg"
+        }
+      ],
+      "shippingAddress": {
+        "fullName": "A I S Amarasinghe",
+        "phone": "07211122",
+        "street": "0 , , bokalagama ,",
+        "city": "Mirigama",
+        "postalCode": "",
+        "country": "Sri Lanka"
+      },
+      "paymentMethod": "card",
+      "totalAmountLKR": 16200,
+      "status": "Processing",
+      "trackingNumber": "TRK-SL-235134"
+    },
+    {
+      "id": "ord-1795793269550",
+      "orderNumber": "LV-80278",
+      "date": "2026-11-27",
+      "items": [
+        {
+          "productId": "lov-nck-11",
+          "productName": "Aura Celestial Sunburst Medallion Necklace",
+          "variantColor": "18K Yellow Gold",
+          "variantSize": "18 inch",
+          "unitPrice": 17200,
+          "quantity": 1,
+          "image": "/assets/necklace.jpg"
+        }
+      ],
+      "shippingAddress": {
+        "fullName": "Isuru Sahan",
+        "phone": "071 287 5731",
+        "street": "100 Galle Road",
+        "city": "Colombo 07",
+        "postalCode": "",
+        "country": "Sri Lanka"
+      },
+      "paymentMethod": "cod",
+      "totalAmountLKR": 17200,
+      "status": "Processing",
+      "trackingNumber": "TRK-SL-502251"
+    },
+    {
+      "id": "ord-1795792362667",
+      "orderNumber": "LV-86995",
+      "date": "2026-11-27",
+      "items": [
+        {
+          "productId": "lov-nck-11",
+          "productName": "Aura Celestial Sunburst Medallion Necklace",
+          "variantColor": "18K Yellow Gold",
+          "variantSize": "18 inch",
+          "unitPrice": 17200,
+          "quantity": 1,
+          "image": "/assets/necklace.jpg"
+        }
+      ],
+      "shippingAddress": {
+        "fullName": "Kasun Perera",
+        "phone": "+94 77 123 4567",
+        "street": "45/2 Cinnamon Gardens",
+        "city": "Colombo 07",
+        "postalCode": "00700",
+        "country": "Sri Lanka"
+      },
+      "paymentMethod": "card",
+      "totalAmountLKR": 17200,
+      "status": "Processing",
+      "trackingNumber": "TRK-SL-605291"
+    },
+    {
+      "id": "ord-1795792268000",
+      "orderNumber": "LV-35923",
+      "date": "2026-11-27",
+      "items": [
+        {
+          "productId": "lov-brc-11",
+          "productName": "Monaco Emerald Bezel Link Tennis Bracelet",
+          "variantColor": "18K Gold & Emerald",
+          "variantSize": "7 inch",
+          "unitPrice": 16200,
+          "quantity": 1,
+          "image": "/assets/bracelet.jpg"
+        }
+      ],
+      "shippingAddress": {
+        "fullName": "Isuru Sahan",
+        "phone": "+94 77 123 4567",
+        "street": "45/2 Cinnamon Gardens",
+        "city": "Colombo 07",
+        "postalCode": "00700",
+        "country": "Sri Lanka"
+      },
+      "paymentMethod": "cod",
+      "totalAmountLKR": 16200,
+      "status": "Processing",
+      "trackingNumber": "TRK-SL-775172"
+    },
+    {
+      "id": "ord-1795792177940",
+      "orderNumber": "LV-54412",
+      "date": "2026-11-27",
+      "items": [
+        {
+          "productId": "lov-nck-12",
+          "productName": "Duchess Baroque Freshwater Pearl Choker",
+          "variantColor": "Lustrous Ivory Pearl",
+          "variantSize": "16 inch",
+          "unitPrice": 19500,
+          "quantity": 1,
+          "image": "/assets/necklace2.jpg"
+        },
+        {
+          "productId": "lov-brc-11",
+          "productName": "Monaco Emerald Bezel Link Tennis Bracelet",
+          "variantColor": "18K Gold & Emerald",
+          "variantSize": "7 inch",
+          "unitPrice": 16200,
+          "quantity": 1,
+          "image": "/assets/bracelet.jpg"
+        }
+      ],
+      "shippingAddress": {
+        "fullName": "Kasun Perera",
+        "phone": "+94 77 123 4567",
+        "street": "45/2 Cinnamon Gardens",
+        "city": "Colombo 07",
+        "postalCode": "00700",
+        "country": "Sri Lanka"
+      },
+      "paymentMethod": "cod",
+      "totalAmountLKR": 35700,
+      "status": "Processing",
+      "trackingNumber": "TRK-SL-780364"
+    },
+    {
+      "id": "ord-1795791882030",
+      "orderNumber": "LV-21510",
+      "date": "2026-11-27",
+      "items": [
+        {
+          "productId": "lov-brc-11",
+          "productName": "Monaco Emerald Bezel Link Tennis Bracelet",
+          "variantColor": "18K Gold & Emerald",
+          "variantSize": "7 inch",
+          "unitPrice": 16200,
+          "quantity": 1,
+          "image": "/assets/bracelet.jpg"
+        }
+      ],
+      "shippingAddress": {
+        "fullName": "Kasun Perera",
+        "phone": "+94 77 123 4567",
+        "street": "45/2 Cinnamon Gardens",
+        "city": "Colombo 07",
+        "postalCode": "00700",
+        "country": "Sri Lanka"
+      },
+      "paymentMethod": "cod",
+      "totalAmountLKR": 16200,
+      "status": "Processing",
+      "trackingNumber": "TRK-SL-526178"
+    },
+    {
+      "id": "ord-1795791011448",
+      "orderNumber": "LV-85783",
+      "date": "2026-11-27",
+      "items": [
+        {
+          "productId": "lov-brc-11",
+          "productName": "Monaco Emerald Bezel Link Tennis Bracelet",
+          "variantColor": "18K Gold & Emerald",
+          "variantSize": "7 inch",
+          "unitPrice": 16200,
+          "quantity": 1,
+          "image": "/assets/bracelet.jpg"
+        }
+      ],
+      "shippingAddress": {
+        "fullName": "Kasun Perera",
+        "phone": "+94 77 123 4567",
+        "street": "45/2 Cinnamon Gardens",
+        "city": "Colombo 07",
+        "postalCode": "00700",
+        "country": "Sri Lanka"
+      },
+      "paymentMethod": "card",
+      "totalAmountLKR": 16200,
+      "status": "Processing",
+      "trackingNumber": "TRK-SL-640284"
+    },
+    {
+      "id": "ord-1795790676700",
+      "orderNumber": "LV-57598",
+      "date": "2026-11-27",
+      "items": [
+        {
+          "productId": "lov-nck-11",
+          "productName": "Aura Celestial Sunburst Medallion Necklace",
+          "variantColor": "18K Yellow Gold",
+          "variantSize": "18 inch",
+          "unitPrice": 17200,
+          "quantity": 1,
+          "image": "/assets/necklace.jpg"
+        }
+      ],
+      "shippingAddress": {
+        "fullName": "Kasun Perera",
+        "phone": "+94 77 123 4567",
+        "street": "45/2 Cinnamon Gardens",
+        "city": "Colombo 07",
+        "postalCode": "00700",
+        "country": "Sri Lanka"
+      },
+      "paymentMethod": "card",
+      "totalAmountLKR": 17200,
+      "status": "Processing",
+      "trackingNumber": "TRK-SL-159305"
+    },
+    {
       "id": "ord-1795753427524",
       "orderNumber": "LV-14947",
       "date": "2026-11-27",
